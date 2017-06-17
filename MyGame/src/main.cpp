@@ -23,17 +23,68 @@ int main()
 {
 	g_pEngine = new CEngine();
 	g_pEngine->Init();
-	
-	CGameObject* pPlayer = new CGameObject();
-	pPlayer->Init();
-	pPlayer->SetSpriteImage(GetBaseDirectory() + "resource\\strike.jpg");
-	pPlayer->SetScale(32.0f);
 
-	CGameObject* pPlayer1 = new CGameObject();
+	CMeshData* pMeshData = GetResourceFactory()->Create<CMeshData>(RESOURCE_TYPE::RESOURCE_MESH_DATA);
+
+	pMeshData->m_nNumIndex = 4;
+	pMeshData->m_nNumIndex = 6;
+	pMeshData->m_Positions =
+	{
+		-1.0f, -1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+	};
+	pMeshData->m_Colors =
+	{
+		1.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+	};
+
+	pMeshData->m_UVs =
+	{
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+	};
+
+	pMeshData->m_Indices =
+	{
+		0,1,2,
+		0,2,3,
+	};
+
+	CShape* pShape = GetResourceFactory()->Create<CShape>(RESOURCE_TYPE::RESOURCE_SHAPE);
+	pShape->Init(pMeshData);
+
+	CSpriteEffect* pEffect = GetResourceFactory()->Create<CSpriteEffect>(RESOURCE_TYPE::RESOURCE_EFFECT);
+	pEffect->Init();
+
+	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	pSprite->Init(GetBaseDirectory() + "resource\\strike.jpg");
+
+	CTexture2D* pShipeSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	pShipeSprite->Init(GetBaseDirectory() + "resource\\playerShip1_orange.png");
+	
+	CSpriteObject* pPlayer = new CSpriteObject();
+	AddGameObject(pPlayer);
+	pPlayer->Init();
+	pPlayer->SetScale(32.0f);
+	pPlayer->SetShape(pShape);
+	pPlayer->SetEffect(pEffect);
+	pPlayer->SetSprite(pSprite);
+
+	CSpriteObject* pPlayer1 = new CSpriteObject();
+	AddGameObject(pPlayer1);
 	pPlayer1->Init();
-	pPlayer1->SetSpriteImage(GetBaseDirectory() + "resource\\playerShip1_orange.png");
 	pPlayer1->SetPosiiton(glm::vec3(100.0f, 0.0f, 0.0f));
 	pPlayer1->SetScale(32.0f);
+	pPlayer1->SetShape(pShape);
+	pPlayer1->SetEffect(pEffect);
+	pPlayer1->SetSprite(pShipeSprite);
 
 	Test_Other();
 
@@ -66,15 +117,13 @@ int main()
 
 	glfwTerminate();
 
-	delete g_pEngine;
-	g_pEngine = nullptr;
+	DELETE_PTR(g_pEngine);
 
 	return 0;
 }
 
 void Test_Other()
 {
-	
 	int test = 10;
 }
 

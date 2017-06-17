@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include <iostream>
-#include "SmartPointer.h"
 
 CEngine* CEngine::m_sEngine = nullptr;
 
@@ -10,6 +9,8 @@ CEngine::CEngine()
 	m_gFileSys = nullptr;
 	m_gShaderMgr = nullptr;
 	m_gCamera = nullptr;
+	m_gResourceFactory = nullptr;
+	m_gGameObjeectMgr = nullptr;
 
 	m_gScreenWidth = 800;
 	m_gScreenHeight = 600;
@@ -20,6 +21,11 @@ CEngine::~CEngine()
 	DELETE_PTR(m_gShaderMgr);
 	DELETE_PTR(m_gCamera);
 	DELETE_PTR(m_gFileSys);
+	DELETE_PTR(m_gResourceFactory);
+	DELETE_PTR(m_gGameObjeectMgr);
+
+	glfwDestroyWindow(m_gWindow);
+	m_gWindow = nullptr;
 }
 
 int CEngine::Init()
@@ -56,6 +62,10 @@ int CEngine::Init()
 
 	m_gCamera = new CCamera(800, 600);
 
+	m_gResourceFactory = new CResourceFactory();
+
+	m_gGameObjeectMgr = new CGameObjectManager();
+
 	return 0;
 }
 
@@ -83,4 +93,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 const std::string& GetBaseDirectory()
 {
 	return CEngine::GetEngine()->m_gFileSys->GetBaseDirectory();
+}
+
+CResourceFactory * GetResourceFactory()
+{
+	return CEngine::GetEngine()->m_gResourceFactory;
+}
+
+void AddGameObject(IGameObject * pObj)
+{
+	CEngine::GetEngine()->m_gGameObjeectMgr->AddGameObject(pObj);
 }

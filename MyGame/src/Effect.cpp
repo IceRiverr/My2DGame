@@ -62,7 +62,7 @@ uint LinkShaderProgram(uint vs, uint ps)
 
 
 CShader::CShader(GLenum type, std::string shaderFile)
-	: CRefCounter(this)
+	: IResource()
 	, m_ShaderType(type)
 	, m_ShaderFile(shaderFile)
 	, m_Shader(0)
@@ -77,12 +77,11 @@ CShader::~CShader()
 
 void CShader::Delete()
 {
-	if (m_Shader == 0)
-		glDeleteShader(m_Shader);
+	glDeleteShader(m_Shader);
 }
 
 CEffect::CEffect()
-	: CRefCounter(this)
+	: IResource()
 	, m_ShaderProgram(0)
 	, m_VertexShader(nullptr)
 	, m_FragmentShader(nullptr)

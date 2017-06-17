@@ -14,3 +14,7 @@ vs2015 debug 64
 支持线条
 支持纯色
 支持文字
+
+http://blog.sina.com.cn/s/blog_557bc4650102v98n.html
+VS2013 编译程序时提示 无法查找或打开 PDB 文件
+

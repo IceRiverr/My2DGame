@@ -9,7 +9,7 @@
 #include <glm\gtc\type_ptr.hpp>
 
 #include "TypeDefine.h"
-#include "SmartPointer.h"
+#include "Resource.h"
 
 uint LinkShaderProgram(uint vs, uint ps);
 uint CreateShader(GLenum type, std::string shaderFile);
@@ -29,7 +29,7 @@ private:
 	std::map<std::string, CShader*> m_Shaders;
 };
 
-class CShader : public CRefCounter<CShader>
+class CShader : public IResource
 {
 public:
 	CShader(GLenum type, std::string shaderFile);
@@ -44,11 +44,11 @@ private:
 	uint			m_Shader;
 };
 
-class CEffect : public CRefCounter<CEffect>
+class CEffect : public IResource
 {
 public:
 	CEffect();
-	virtual ~CEffect();
+	~CEffect();
 	
 	void Bind();
 
