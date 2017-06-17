@@ -1,11 +1,14 @@
 #pragma once
 #include "Effect.h"
 #include "Camera.h"
+#include "FileSystem.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+const std::string& GetBaseDirectory();
 
 class CEngine
 {
+	friend const std::string& GetBaseDirectory();
 public:
 	CEngine();
 	~CEngine();
@@ -25,6 +28,8 @@ public:
 	CCamera*			m_gCamera;
 
 private:
-	static CEngine* m_sEngine;
+	static CEngine*		m_sEngine;
+
+	CFileSystem*		m_gFileSys;
 };
 

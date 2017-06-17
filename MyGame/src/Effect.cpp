@@ -161,8 +161,8 @@ CShaderManager::~CShaderManager()
 
 void CShaderManager::Init()
 {
-	CShader* pSimpleVS = new CShader(GL_VERTEX_SHADER, "../shader/simpleVS.glsl");
-	CShader* pSimplePS = new CShader(GL_FRAGMENT_SHADER, "../shader/simplePS.glsl");
+	CShader* pSimpleVS = new CShader(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\simpleVS.glsl");
+	CShader* pSimplePS = new CShader(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\simplePS.glsl");
 
 	m_Shaders.insert(std::pair<std::string, CShader*>("simpleVS", pSimpleVS));
 	m_Shaders.insert(std::pair<std::string, CShader*>("simplePS", pSimplePS));

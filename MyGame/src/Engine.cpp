@@ -1,11 +1,13 @@
 #include "Engine.h"
 #include <iostream>
+#include "SmartPointer.h"
 
 CEngine* CEngine::m_sEngine = nullptr;
 
 CEngine::CEngine()
 {
 	m_gWindow = nullptr;
+	m_gFileSys = nullptr;
 	m_gShaderMgr = nullptr;
 	m_gCamera = nullptr;
 
@@ -15,16 +17,9 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
-	if (m_gShaderMgr)
-	{
-		delete m_gShaderMgr;
-		m_gShaderMgr = nullptr;
-	}
-	if (m_gCamera)
-	{
-		delete m_gCamera;
-		m_gCamera = nullptr;
-	}
+	DELETE_PTR(m_gShaderMgr);
+	DELETE_PTR(m_gCamera);
+	DELETE_PTR(m_gFileSys);
 }
 
 int CEngine::Init()
@@ -53,6 +48,9 @@ int CEngine::Init()
 
 	glfwSetFramebufferSizeCallback(m_gWindow, framebuffer_size_callback);
 
+	m_gFileSys = new CFileSystem();
+	m_gFileSys->SetBaseDirectoryName("MyGame");
+
 	m_gShaderMgr = new CShaderManager();
 	m_gShaderMgr->Init();
 
@@ -80,4 +78,9 @@ void CEngine::ProcessInput(GLFWwindow * window)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	CEngine::GetEngine()->Resize(width, height);
+}
+
+const std::string& GetBaseDirectory()
+{
+	return CEngine::GetEngine()->m_gFileSys->GetBaseDirectory();
 }

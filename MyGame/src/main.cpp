@@ -1,9 +1,9 @@
 
 #include <iostream>
 #include <math.h>
+
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
-
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
@@ -26,12 +26,12 @@ int main()
 	
 	CGameObject* pPlayer = new CGameObject();
 	pPlayer->Init();
-	pPlayer->SetSpriteImage("../resource/strike.jpg");
+	pPlayer->SetSpriteImage(GetBaseDirectory() + "resource\\strike.jpg");
 	pPlayer->SetScale(32.0f);
 
 	CGameObject* pPlayer1 = new CGameObject();
 	pPlayer1->Init();
-	pPlayer1->SetSpriteImage("../resource/playerShip1_orange.png");
+	pPlayer1->SetSpriteImage(GetBaseDirectory() + "resource\\playerShip1_orange.png");
 	pPlayer1->SetPosiiton(glm::vec3(100.0f, 0.0f, 0.0f));
 	pPlayer1->SetScale(32.0f);
 
@@ -74,11 +74,8 @@ int main()
 
 void Test_Other()
 {
-	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-	glm::mat4 trans;
-	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-	vec = trans * vec;
-	std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
-
+	
 	int test = 10;
 }
+
+

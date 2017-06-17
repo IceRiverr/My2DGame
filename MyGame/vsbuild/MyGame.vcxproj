@@ -23,6 +23,7 @@
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Effect.h" />
     <ClInclude Include="..\src\Engine.h" />
+    <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Shape.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\Effect.cpp" />
     <ClCompile Include="..\src\Engine.cpp" />
+    <ClCompile Include="..\src\FileSystem.cpp" />
     <ClCompile Include="..\src\GameObject.cpp" />
     <ClCompile Include="..\src\glad.c" />
     <ClCompile Include="..\src\main.cpp" />

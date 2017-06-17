@@ -9,3 +9,4 @@ MyGame/vsbuild/.vs/MyGame/v14/.suo
 MyGame/vsbuild/MyGame.VC.VC.opendb
 MyGame/src/Effect.cpp~RF5c83451d.TMP
 MyGame/src/main.cpp~RF5c5f4328.TMP
+*.TMP
