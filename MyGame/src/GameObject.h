@@ -35,7 +35,34 @@ public:
 	virtual void ProcessInput(GLFWwindow* window) = 0;
 };
 
-class CSpriteObject : public IGameObject
+class CBaseObject : public IGameObject
+{
+public:
+	CBaseObject();
+	~CBaseObject();
+
+	void Init();
+	void Update();
+	void Draw();
+	void ProcessInput(GLFWwindow* window);
+
+	void SetShape(CShape* pShape);
+	void SetPosiiton(const glm::vec3& pos);
+	void SetRotate(float angle);
+	void SetScale(float scale);
+
+protected:
+	CShape*			m_pShape;
+
+	glm::vec3		m_vPosition;
+	float			m_fRotate;
+	float			m_fScale;
+	glm::mat4		m_mModelMatrix;
+
+	bool			m_bMatrixDirty;
+};
+
+class CSpriteObject : public CBaseObject
 {
 public:
 	CSpriteObject();
@@ -45,24 +72,37 @@ public:
 	void Update();
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
-
-	void SetShape(CShape* pShape);
+	
 	void SetEffect(CSpriteEffect* pEffect);
 	void SetSprite(CTexture2D* pSprite);
+protected:
+	CSpriteEffect*		m_pEffect;
+	CTexture2D*			m_pSprite;
+};
 
-	void SetPosiiton(const glm::vec3& pos);
-	void SetRotate(float angle);
-	void SetScale(float scale);
+class CSolidColorObject : public CBaseObject
+{
+public:
+	CSolidColorObject();
+	~CSolidColorObject();
 
-private:
-	CShape*			m_pShape;
-	CSpriteEffect*	m_pEffect;
-	CTexture2D*		m_pSprite;
+	void Init();
+	void Update();
+	void Draw();
+	void ProcessInput(GLFWwindow* window);
+	
+	void SetColor(const glm::vec4& color);
+	void SetEffect(CSolidColorEffect* pEffect);
+protected:
+	CSolidColorEffect*	m_pEffect;
+	glm::vec4			m_vColor;
+};
 
-	glm::vec3		m_vPosition;
-	float			m_fRotate;
-	float			m_fScale;
-	glm::mat4		m_mModelMatrix;
+class CLineShape : public CSolidColorObject
+{
+public:
+	CLineShape();
+	~CLineShape();
 
-	bool			m_bMatrixDirty;
+	void Draw();
 };

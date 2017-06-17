@@ -31,8 +31,10 @@
     <ClInclude Include="..\src\SmartPointer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shader\simplePS.glsl" />
-    <None Include="..\shader\simpleVS.glsl" />
+    <None Include="..\shader\SimplePS.glsl" />
+    <None Include="..\shader\SimpleVS.glsl" />
+    <None Include="..\shader\SolidColorPS.glsl" />
+    <None Include="..\shader\SolidColorVS.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />

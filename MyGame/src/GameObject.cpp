@@ -32,22 +32,82 @@ void CGameObjectManager::AddGameObject(IGameObject* obj)
 	m_GameObjectPool.push_back(obj);
 }
 
-CSpriteObject::CSpriteObject()
-	: IGameObject()
-	, m_pShape(nullptr)
-	, m_pEffect(nullptr)
-	, m_pSprite(nullptr)
+
+CBaseObject::CBaseObject()
+	: m_pShape(nullptr)
+	
 	, m_vPosition(0.0f, 0.0f, 0.0f)
 	, m_fRotate(0.0f)
 	, m_fScale(1.0f)
 	, m_bMatrixDirty(true)
+{
+
+}
+
+CBaseObject::~CBaseObject()
+{
+	RELEASE_PTR(m_pShape);
+	
+}
+
+void CBaseObject::Init()
+{
+}
+
+void CBaseObject::Update()
+{
+	if (m_bMatrixDirty)
+	{
+		m_mModelMatrix = glm::mat4();
+		m_mModelMatrix = glm::translate(m_mModelMatrix, m_vPosition);
+		m_mModelMatrix = glm::rotate(m_mModelMatrix, glm::radians(m_fRotate), glm::vec3(0.0f, 0.0f, 1.0f));
+		m_mModelMatrix = glm::scale(m_mModelMatrix, glm::vec3(m_fScale, m_fScale, m_fScale));
+		m_bMatrixDirty = false;
+	}
+}
+
+void CBaseObject::Draw()
+{
+}
+
+void CBaseObject::ProcessInput(GLFWwindow * window)
+{
+}
+
+void CBaseObject::SetShape(CShape * pShape)
+{
+	RELEASE_PTR(m_pShape);
+	m_pShape = pShape;
+	m_pShape->AddRef();
+}
+
+void CBaseObject::SetPosiiton(const glm::vec3 & pos)
+{
+	m_vPosition = pos;
+	m_bMatrixDirty = true;
+}
+
+void CBaseObject::SetRotate(float angle)
+{
+	m_fRotate = angle;
+	m_bMatrixDirty = true;
+}
+
+void CBaseObject::SetScale(float scale)
+{
+	m_fScale = scale;
+	m_bMatrixDirty = true;
+}
+
+CSpriteObject::CSpriteObject()
+	: m_pEffect(nullptr)
+	, m_pSprite(nullptr)
 {
 	
 }
 
 CSpriteObject::~CSpriteObject()
 {
-	RELEASE_PTR(m_pShape);
 	RELEASE_PTR(m_pEffect);
 	RELEASE_PTR(m_pSprite);
 }
@@ -58,14 +118,7 @@ void CSpriteObject::Init()
 
 void CSpriteObject::Update()
 {
-	if (m_bMatrixDirty)
-	{
-		m_mModelMatrix = glm::mat4();
-		m_mModelMatrix = glm::translate(m_mModelMatrix, m_vPosition);
-		m_mModelMatrix = glm::rotate(m_mModelMatrix, glm::radians(m_fRotate), glm::vec3(0.0f, 0.0f, 1.0f));
-		m_mModelMatrix = glm::scale(m_mModelMatrix, glm::vec3(m_fScale, m_fScale, m_fScale));
-		m_bMatrixDirty = false;
-	}
+	CBaseObject::Update();
 }
 
 void CSpriteObject::Draw()
@@ -78,7 +131,7 @@ void CSpriteObject::Draw()
 	m_pEffect->Bind();
 	m_pEffect->BindParameters(m_mModelMatrix);
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // test, need to adjust
+	glDrawElements(GL_TRIANGLES, m_pShape->GetMeshData()->m_nNumIndex, GL_UNSIGNED_INT, 0);
 }
 
 void CSpriteObject::ProcessInput(GLFWwindow* window)
@@ -98,14 +151,7 @@ void CSpriteObject::ProcessInput(GLFWwindow* window)
 	m_bMatrixDirty = true;
 }
 
-void CSpriteObject::SetShape(CShape * pShape)
-{
-	RELEASE_PTR(m_pShape);
-	m_pShape = pShape;
-	m_pShape->AddRef();
-}
-
-void CSpriteObject::SetEffect(CSpriteEffect * pEffect)
+void CSpriteObject::SetEffect(CSpriteEffect* pEffect)
 {
 	RELEASE_PTR(m_pEffect);
 	m_pEffect = pEffect;
@@ -119,20 +165,72 @@ void CSpriteObject::SetSprite(CTexture2D * pSprite)
 	m_pSprite->AddRef();
 }
 
-void CSpriteObject::SetPosiiton(const glm::vec3 & pos)
+CSolidColorObject::CSolidColorObject()
+	: m_pEffect(NULL)
+	, m_vColor(0.0f, 0.0f, 1.0f, 1.0f)
 {
-	m_vPosition = pos;
-	m_bMatrixDirty = true;
 }
 
-void CSpriteObject::SetRotate(float angle)
+CSolidColorObject::~CSolidColorObject()
 {
-	m_fRotate = angle;
-	m_bMatrixDirty = true;
+
 }
 
-void CSpriteObject::SetScale(float scale)
+void CSolidColorObject::Init()
 {
-	m_fScale = scale;
-	m_bMatrixDirty = true;
+
+}
+
+void CSolidColorObject::Update()
+{
+	CBaseObject::Update();
+}
+
+void CSolidColorObject::Draw()
+{
+	if (m_pShape == nullptr || m_pEffect == nullptr)
+		return;
+
+	m_pShape->Bind();
+	m_pEffect->Bind();
+	m_pEffect->BindParameters(m_mModelMatrix, m_vColor);
+
+	glDrawElements(GL_TRIANGLES, m_pShape->GetMeshData()->m_nNumIndex, GL_UNSIGNED_INT, 0);
+}
+
+void CSolidColorObject::ProcessInput(GLFWwindow* window)
+{
+
+}
+
+void CSolidColorObject::SetColor(const glm::vec4& color)
+{
+	m_vColor = color;
+}
+
+void CSolidColorObject::SetEffect(CSolidColorEffect * pEffect)
+{
+	RELEASE_PTR(m_pEffect);
+	m_pEffect = pEffect;
+	m_pEffect->AddRef();
+}
+
+CLineShape::CLineShape()
+{
+}
+
+CLineShape::~CLineShape()
+{
+}
+
+void CLineShape::Draw()
+{
+	if (m_pShape == nullptr || m_pEffect == nullptr)
+		return;
+
+	m_pShape->Bind();
+	m_pEffect->Bind();
+	m_pEffect->BindParameters(m_mModelMatrix, m_vColor);
+
+	glDrawElements(GL_LINES, m_pShape->GetMeshData()->m_nNumIndex, GL_UNSIGNED_INT, 0);
 }

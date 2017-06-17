@@ -32,8 +32,9 @@ private:
 class CShader : public IResource
 {
 public:
-	CShader(GLenum type, std::string shaderFile);
+	CShader();
 	~CShader();
+	void Init(GLenum type, std::string shaderFile);
 	void Delete();
 
 	inline uint GetShader() { return m_Shader; }
@@ -50,6 +51,7 @@ public:
 	CEffect();
 	~CEffect();
 	
+	virtual void Init() = 0;
 	void Bind();
 
 protected:
@@ -59,6 +61,10 @@ protected:
 	CShader* m_VertexShader;
 	CShader* m_FragmentShader;
 	uint m_ShaderProgram;
+
+	int m_ModelMatLocation;
+	int m_ViewMatLocation;
+	int m_ProjectMatLocation;
 };
 
 class CSpriteEffect : public CEffect
@@ -71,8 +77,18 @@ public:
 	void BindParameters(const glm::mat4& model);
 
 private:
-	int m_ModelMatLocation;
-	int m_ViewMatLocation;
-	int m_ProjectMatLocation;
 	int m_SrcTexLocation;
+};
+
+class CSolidColorEffect : public CEffect
+{
+public:
+	CSolidColorEffect();
+	~CSolidColorEffect();
+	
+	void Init();
+	void BindParameters(const glm::mat4& model, glm::vec4 vertexColor);
+
+private:
+	int m_VertexColorLocation;
 };

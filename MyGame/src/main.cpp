@@ -26,7 +26,7 @@ int main()
 
 	CMeshData* pMeshData = GetResourceFactory()->Create<CMeshData>(RESOURCE_TYPE::RESOURCE_MESH_DATA);
 
-	pMeshData->m_nNumIndex = 4;
+	pMeshData->m_nNumVertex = 4;
 	pMeshData->m_nNumIndex = 6;
 	pMeshData->m_Positions =
 	{
@@ -34,13 +34,6 @@ int main()
 		-1.0f, 1.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
 		1.0f, -1.0f, 0.0f,
-	};
-	pMeshData->m_Colors =
-	{
-		1.0f, 0.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
 	};
 
 	pMeshData->m_UVs =
@@ -58,16 +51,38 @@ int main()
 	};
 
 	CShape* pShape = GetResourceFactory()->Create<CShape>(RESOURCE_TYPE::RESOURCE_SHAPE);
-	pShape->Init(pMeshData);
+	pShape->Init(pMeshData, VERTEX_POSITION_UV);
+
+	CShape* pSolidShape = GetResourceFactory()->Create<CShape>(RESOURCE_TYPE::RESOURCE_SHAPE);
+	pSolidShape->Init(pMeshData, VERTEX_POSITION);
+
+	CMeshData* pLineMesh = GetResourceFactory()->Create<CMeshData>(RESOURCE_TYPE::RESOURCE_MESH_DATA);
+	pLineMesh->m_nNumVertex = 4;
+	pLineMesh->m_nNumIndex = 8;
+	pLineMesh->m_Positions =
+	{
+		-1.0f, -1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+	};
+	pLineMesh->m_Indices =
+	{
+		0, 1, 1, 2,
+		2, 3, 3, 0,
+	};
+
+	CShape* pLineShape = GetResourceFactory()->Create<CShape>(RESOURCE_TYPE::RESOURCE_SHAPE);
+	pLineShape->Init(pLineMesh, VERTEX_POSITION);
 
 	CSpriteEffect* pEffect = GetResourceFactory()->Create<CSpriteEffect>(RESOURCE_TYPE::RESOURCE_EFFECT);
 	pEffect->Init();
 
+	CSolidColorEffect* pSolidEffect = GetResourceFactory()->Create<CSolidColorEffect>(RESOURCE_TYPE::RESOURCE_EFFECT);
+	pSolidEffect->Init();
+
 	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
 	pSprite->Init(GetBaseDirectory() + "resource\\strike.jpg");
-
-	CTexture2D* pShipeSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pShipeSprite->Init(GetBaseDirectory() + "resource\\playerShip1_orange.png");
 	
 	CSpriteObject* pPlayer = new CSpriteObject();
 	AddGameObject(pPlayer);
@@ -84,7 +99,23 @@ int main()
 	pPlayer1->SetScale(32.0f);
 	pPlayer1->SetShape(pShape);
 	pPlayer1->SetEffect(pEffect);
-	pPlayer1->SetSprite(pShipeSprite);
+	pPlayer1->SetSprite(pSprite);
+
+	CSolidColorObject* pBox = new CSolidColorObject();
+	AddGameObject(pBox);
+	pBox->Init();
+	pBox->SetPosiiton(glm::vec3(0.0f, 100.0f, 0.0f));
+	pBox->SetScale(32.0f);
+	pBox->SetShape(pSolidShape);
+	pBox->SetEffect(pSolidEffect);
+
+	CLineShape* pLine = new CLineShape();
+	AddGameObject(pLine);
+	pLine->Init();
+	pLine->SetPosiiton(glm::vec3(100.0f, 100.0f, 0.0f));
+	pLine->SetScale(32.0f);
+	pLine->SetShape(pLineShape);
+	pLine->SetEffect(pSolidEffect);
 
 	Test_Other();
 
@@ -101,6 +132,8 @@ int main()
 
 		pPlayer1->SetRotate(glm::degrees(time) * 2.0f);
 		pPlayer1->Update();
+		pBox->Update();
+		pLine->Update();
 
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -110,6 +143,8 @@ int main()
 
 		pPlayer->Draw();
 		pPlayer1->Draw();
+		pBox->Draw();
+		pLine->Draw();
 
 		glfwPollEvents();
 		glfwSwapBuffers(CEngine::GetEngine()->m_gWindow);

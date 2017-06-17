@@ -48,10 +48,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shader\simplePS.glsl">
+    <None Include="..\shader\SolidColorPS.glsl">
       <Filter>shader</Filter>
     </None>
-    <None Include="..\shader\simpleVS.glsl">
+    <None Include="..\shader\SolidColorVS.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\shader\SimplePS.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\shader\SimpleVS.glsl">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>

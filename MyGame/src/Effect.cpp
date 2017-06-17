@@ -60,19 +60,66 @@ uint LinkShaderProgram(uint vs, uint ps)
 	return shaderProgram;
 }
 
+CShaderManager::CShaderManager()
+{
+}
 
-CShader::CShader(GLenum type, std::string shaderFile)
+CShaderManager::~CShaderManager()
+{
+	for (auto it = m_Shaders.begin(); it != m_Shaders.end();)
+	{
+		RELEASE_PTR(it->second);
+		m_Shaders.erase(it++);
+	}
+}
+
+void CShaderManager::Init()
+{
+	CShader* pSolidColorVS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
+	pSolidColorVS->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\SolidColorVS.glsl");
+	pSolidColorVS->AddRef();
+	m_Shaders.insert(std::pair<std::string, CShader*>("SolidColorVS", pSolidColorVS));
+
+	CShader* pSolidColorPS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
+	pSolidColorPS->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\SolidColorPS.glsl");
+	pSolidColorPS->AddRef();
+	m_Shaders.insert(std::pair<std::string, CShader*>("SolidColorPS", pSolidColorPS));
+
+	CShader* pSimpleVS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
+	pSimpleVS->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\SimpleVS.glsl");
+	pSimpleVS->AddRef();
+	m_Shaders.insert(std::pair<std::string, CShader*>("SimpleVS", pSimpleVS));
+
+	CShader* pSimplePS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
+	pSimplePS->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\SimplePS.glsl");
+	pSimplePS->AddRef();
+	m_Shaders.insert(std::pair<std::string, CShader*>("SimplePS", pSimplePS));
+}
+
+CShader * CShaderManager::GetShader(std::string name)
+{
+	auto it = m_Shaders.find(name);
+	if (it != m_Shaders.end())
+		return it->second;
+	return nullptr;
+}
+
+CShader::CShader()
 	: IResource()
-	, m_ShaderType(type)
-	, m_ShaderFile(shaderFile)
 	, m_Shader(0)
 {
-	m_Shader = CreateShader(m_ShaderType, m_ShaderFile);
 }
 
 CShader::~CShader()
 {
 	Delete();
+}
+
+void CShader::Init(GLenum type, std::string shaderFile)
+{
+	m_ShaderType = type;
+	m_ShaderFile = shaderFile;
+	m_Shader = CreateShader(m_ShaderType, m_ShaderFile);
 }
 
 void CShader::Delete()
@@ -123,13 +170,13 @@ CSpriteEffect::CSpriteEffect()
 
 CSpriteEffect::~CSpriteEffect()
 {
-	CEffect::~CEffect();
+
 }
 
 void CSpriteEffect::Init()
 {
 	CShaderManager* shaderMgr = CEngine::GetEngine()->m_gShaderMgr;
-	LinkShader(shaderMgr->GetShader("simpleVS"), shaderMgr->GetShader("simplePS"));
+	LinkShader(shaderMgr->GetShader("SimpleVS"), shaderMgr->GetShader("SimplePS"));
 
 	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
 	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");
@@ -145,32 +192,30 @@ void CSpriteEffect::BindParameters(const glm::mat4 & model)
 	glUniform1i(m_SrcTexLocation, 0);
 }
 
-CShaderManager::CShaderManager()
+CSolidColorEffect::CSolidColorEffect()
+	: CEffect()
 {
 }
 
-CShaderManager::~CShaderManager()
+CSolidColorEffect::~CSolidColorEffect()
 {
-	for (auto it = m_Shaders.begin(); it != m_Shaders.end();)
-	{
-		RELEASE_PTR(it->second);
-		m_Shaders.erase(it++);
-	}
 }
 
-void CShaderManager::Init()
+void CSolidColorEffect::Init()
 {
-	CShader* pSimpleVS = new CShader(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\simpleVS.glsl");
-	CShader* pSimplePS = new CShader(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\simplePS.glsl");
+	CShaderManager* shaderMgr = CEngine::GetEngine()->m_gShaderMgr;
+	LinkShader(shaderMgr->GetShader("SolidColorVS"), shaderMgr->GetShader("SolidColorPS"));
 
-	m_Shaders.insert(std::pair<std::string, CShader*>("simpleVS", pSimpleVS));
-	m_Shaders.insert(std::pair<std::string, CShader*>("simplePS", pSimplePS));
+	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
+	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");
+	m_ProjectMatLocation = glGetUniformLocation(m_ShaderProgram, "projectMat");
+	m_VertexColorLocation = glGetUniformLocation(m_ShaderProgram, "vertexColor");
 }
 
-CShader * CShaderManager::GetShader(std::string name)
+void CSolidColorEffect::BindParameters(const glm::mat4 & model, glm::vec4 vertexColor)
 {
-	auto it = m_Shaders.find(name);
-	if (it != m_Shaders.end())
-		return it->second;
-	return nullptr;
+	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
+	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
+	glUniform4f(m_VertexColorLocation, vertexColor.r, vertexColor.g, vertexColor.b,vertexColor.a);
 }

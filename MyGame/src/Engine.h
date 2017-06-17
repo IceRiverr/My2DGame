@@ -32,13 +32,12 @@ public:
 	GLFWwindow*			m_gWindow;
 	CShaderManager*		m_gShaderMgr;
 	CCamera*			m_gCamera;
-	
 
 private:
 	static CEngine*		m_sEngine;
-
-	CFileSystem*		m_gFileSys;
+	
 	CResourceFactory*	m_gResourceFactory;
 	CGameObjectManager*	m_gGameObjeectMgr;
+	CFileSystem*		m_gFileSys;
 };
 

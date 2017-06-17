@@ -8,10 +8,18 @@
 #include "TypeDefine.h"
 #include "Resource.h"
 
+enum VERTEX_TYPE
+{
+	VERTEX_POSITION,
+	VERTEX_POSITION_UV,
+	VERTEX_POSITION_COLOR,
+};
+
 class CMeshData : public IResource
 {
 public:
 	CMeshData();
+	bool IsDataValid(VERTEX_TYPE type);
 	
 	int					m_nNumIndex;
 	int					m_nNumVertex;
@@ -28,13 +36,16 @@ public:
 	CShape();
 	~CShape();
 	
-	void Init(CMeshData* pMesh);
+	void Init(CMeshData* pMesh, VERTEX_TYPE type);
 	void Bind();
 
-private:
-	CMeshData*	m_pMeshData;
+	const CMeshData* GetMeshData() const { return m_pMeshData; }
 
-	uint		m_VAO;
-	uint		m_VBO;
-	uint		m_EBO;
+private:
+	CMeshData*			m_pMeshData;
+	VERTEX_TYPE			m_VertexType;
+
+	uint				m_VAO;
+	uint				m_VBO;
+	uint				m_EBO;
 };
