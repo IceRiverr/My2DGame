@@ -62,7 +62,8 @@ uint LinkShaderProgram(uint vs, uint ps)
 
 
 CShader::CShader(GLenum type, std::string shaderFile)
-	: m_ShaderType(type)
+	: CRefCounter(this)
+	, m_ShaderType(type)
 	, m_ShaderFile(shaderFile)
 	, m_Shader(0)
 {
@@ -81,7 +82,8 @@ void CShader::Delete()
 }
 
 CEffect::CEffect()
-	: m_ShaderProgram(0)
+	: CRefCounter(this)
+	, m_ShaderProgram(0)
 	, m_VertexShader(nullptr)
 	, m_FragmentShader(nullptr)
 {
@@ -90,6 +92,9 @@ CEffect::CEffect()
 
 CEffect::~CEffect()
 {
+	RELEASE_PTR(m_VertexShader);
+	RELEASE_PTR(m_FragmentShader);
+
 	glDeleteProgram(m_ShaderProgram);
 }
 
@@ -100,8 +105,14 @@ void CEffect::Bind()
 
 void CEffect::LinkShader(CShader * vs, CShader * ps)
 {
+	RELEASE_PTR(m_VertexShader);
+	RELEASE_PTR(m_FragmentShader);
+	
 	m_VertexShader = vs;
 	m_FragmentShader = ps;
+	m_VertexShader->AddRef();
+	m_FragmentShader->AddRef();
+
 	m_ShaderProgram = LinkShaderProgram(m_VertexShader->GetShader(), m_FragmentShader->GetShader());
 }
 
@@ -143,8 +154,7 @@ CShaderManager::~CShaderManager()
 {
 	for (auto it = m_Shaders.begin(); it != m_Shaders.end();)
 	{
-		delete it->second;
-		it->second = nullptr;
+		RELEASE_PTR(it->second);
 		m_Shaders.erase(it++);
 	}
 }

@@ -13,6 +13,7 @@
 #include "Engine.h"
 #include "Shape.h"
 #include "GameObject.h"
+#include "SmartPointer.h"
 
 void Test_Other();
 
@@ -78,4 +79,6 @@ void Test_Other()
 	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
 	vec = trans * vec;
 	std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
+
+	int test = 10;
 }

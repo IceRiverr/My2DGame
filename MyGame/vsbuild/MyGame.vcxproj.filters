@@ -37,6 +37,9 @@
     <ClInclude Include="..\src\Resource.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\SmartPointer.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\simplePS.glsl">
@@ -69,6 +72,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Resource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SmartPointer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

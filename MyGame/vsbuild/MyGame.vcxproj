@@ -26,6 +26,7 @@
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Shape.h" />
+    <ClInclude Include="..\src\SmartPointer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\simplePS.glsl" />
@@ -40,6 +41,7 @@
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Resource.cpp" />
     <ClCompile Include="..\src\Shape.cpp" />
+    <ClCompile Include="..\src\SmartPointer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D8505C42-E77D-4675-AAC4-5831C8FFC59B}</ProjectGuid>
@@ -92,7 +94,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Projects\MyGame\MyGame\src;D:\SDKs\glfw-3.2.1\include;D:\Projects\MyGame\MyGame\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Projects\My2DGame\MyGame\src;D:\SDKs\glfw-3.2.1\include;D:\Projects\My2DGame\MyGame\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDKs\glfw-3.2.1\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

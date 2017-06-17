@@ -2,9 +2,10 @@
 #pragma once
 
 #include "TypeDefine.h"
+#include "SmartPointer.h"
 #include <string>
 
-class CTexture2D
+class CTexture2D : public CRefCounter<CTexture2D>
 {
 public:
 	CTexture2D(const std::string& filePath);

@@ -6,7 +6,8 @@
 #include <iostream>
 
 CTexture2D::CTexture2D(const std::string& filePath)
-	: m_FilePath(filePath)
+	: CRefCounter(this)
+	, m_FilePath(filePath)
 {
 	
 }
