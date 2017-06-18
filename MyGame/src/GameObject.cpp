@@ -3,12 +3,12 @@
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 
-CGameObjectManager::CGameObjectManager()
+CSceneManager::CSceneManager()
 {
 
 }
 
-CGameObjectManager::~CGameObjectManager()
+CSceneManager::~CSceneManager()
 {
 	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end();)
 	{
@@ -19,7 +19,31 @@ CGameObjectManager::~CGameObjectManager()
 	}
 }
 
-void CGameObjectManager::AddGameObject(IGameObject* obj)
+void CSceneManager::Update()
+{
+	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end(); ++it)
+	{
+		(*it)->Update();
+	}
+}
+
+void CSceneManager::Draw()
+{
+	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end(); ++it)
+	{
+		(*it)->Draw();
+	}
+}
+
+void CSceneManager::ProcessEvent(GLFWwindow * window)
+{
+	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end(); ++it)
+	{
+		(*it)->ProcessInput(window);
+	}
+}
+
+void CSceneManager::AddGameObject(IGameObject* obj)
 {
 	if (obj == nullptr)
 		return;
@@ -35,7 +59,6 @@ void CGameObjectManager::AddGameObject(IGameObject* obj)
 
 CBaseObject::CBaseObject()
 	: m_pShape(nullptr)
-	
 	, m_vPosition(0.0f, 0.0f, 0.0f)
 	, m_fRotate(0.0f)
 	, m_fScale(1.0f)
@@ -81,7 +104,15 @@ void CBaseObject::SetShape(CShape * pShape)
 	m_pShape->AddRef();
 }
 
-void CBaseObject::SetPosiiton(const glm::vec3 & pos)
+void CBaseObject::SetPosiiton(float x, float y, float z)
+{
+	m_vPosition.x = x;
+	m_vPosition.y = y;
+	m_vPosition.z = z;
+	m_bMatrixDirty = true;
+}
+
+void CBaseObject::SetPosiiton(const glm::vec3& pos)
 {
 	m_vPosition = pos;
 	m_bMatrixDirty = true;
@@ -114,6 +145,7 @@ CSpriteObject::~CSpriteObject()
 
 void CSpriteObject::Init()
 {
+	SetEffect(CBuildInResource::GetResource<CSpriteEffect>(CBuildInResource::EFFECT_SPRITE));
 }
 
 void CSpriteObject::Update()
@@ -136,19 +168,7 @@ void CSpriteObject::Draw()
 
 void CSpriteObject::ProcessInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		m_vPosition.x += 1.0f;
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		m_vPosition.x -= 1.0f;
-
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		m_vPosition.y += 1.0f;
-
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		m_vPosition.y -= 1.0f;
-
-	m_bMatrixDirty = true;
+	
 }
 
 void CSpriteObject::SetEffect(CSpriteEffect* pEffect)
@@ -178,7 +198,7 @@ CSolidColorObject::~CSolidColorObject()
 
 void CSolidColorObject::Init()
 {
-
+	SetEffect(CBuildInResource::GetResource<CSolidColorEffect>(CBuildInResource::EFFECT_SOLID_COLOR));
 }
 
 void CSolidColorObject::Update()
@@ -215,15 +235,15 @@ void CSolidColorObject::SetEffect(CSolidColorEffect * pEffect)
 	m_pEffect->AddRef();
 }
 
-CLineShape::CLineShape()
+CLineObject::CLineObject()
 {
 }
 
-CLineShape::~CLineShape()
+CLineObject::~CLineObject()
 {
 }
 
-void CLineShape::Draw()
+void CLineObject::Draw()
 {
 	if (m_pShape == nullptr || m_pEffect == nullptr)
 		return;

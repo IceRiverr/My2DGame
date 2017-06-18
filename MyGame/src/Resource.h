@@ -1,6 +1,7 @@
 
 #pragma once
 #include <list>
+#include <map>
 #include "SmartPointer.h"
 
 class CMeshData;
@@ -72,4 +73,45 @@ bool CResourceFactory::Remove(RESOURCE_TYPE type, T* pResource)
 		}
 	}
 	return false;
+}
+
+class CBuildInResource
+{
+public:
+	enum TYPE
+	{
+		SHADER_SIMPLE_VS,
+		SHADER_SIMPLE_PS,
+		SHADER_SOLID_COLOR_VS,
+		SHADER_SOLID_COLOR_PS,
+
+		EFFECT_SPRITE,
+		EFFECT_SOLID_COLOR,
+
+		MESH_DATA_QUAD,
+		MESH_DATA_QUAD_LINE,
+		MESH_DATA_CIRCLE,
+		MESH_DATA_CIRCLE_LINE,
+
+		SHAPE_SPRITE,
+		SHAPE_QUAD,
+		SHAPE_QUAD_LINE,
+		SHAPE_CIRCLE,
+		SHAPE_CIRCLE_LINE,
+	};
+	
+	static void Regsiter();
+
+	template<typename T>
+	static T* GetResource(CBuildInResource::TYPE type);
+
+private:
+	static std::map<CBuildInResource::TYPE, IResource*> m_LookUpTable;
+};
+
+template<typename T>
+T* CBuildInResource::GetResource(TYPE type)
+{
+	IResource* pRes = m_LookUpTable[type];
+	return static_cast<T*>(pRes);
 }

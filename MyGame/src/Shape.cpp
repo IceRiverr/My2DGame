@@ -13,11 +13,11 @@ bool CMeshData::IsDataValid(VERTEX_TYPE type)
 {
 	// can impove
 	bool bDataValid = false;
-	if (type == VERTEX_TYPE::VERTEX_POSITION)
+	if (type == VERTEX_TYPE::VERTEX_INDEX_POSITION)
 	{
 		bDataValid = (m_Positions.size() > 0);
 	}
-	else if (type == VERTEX_TYPE::VERTEX_POSITION_UV)
+	else if (type == VERTEX_TYPE::VERTEX_INDEX_POSITION_UV)
 	{
 		bDataValid = (m_Positions.size() > 0) && (m_UVs.size() > 0);
 	}
@@ -56,7 +56,7 @@ void CShape::Init(CMeshData* pMesh, VERTEX_TYPE type)
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
-	if (m_VertexType == VERTEX_TYPE::VERTEX_POSITION && pMesh->IsDataValid(m_VertexType))
+	if (m_VertexType == VERTEX_TYPE::VERTEX_INDEX_POSITION && pMesh->IsDataValid(m_VertexType))
 	{
 		glBufferData(GL_ARRAY_BUFFER, m_pMeshData->m_Positions.size() * sizeof(float), nullptr, GL_STATIC_DRAW);
 
@@ -72,7 +72,7 @@ void CShape::Init(CMeshData* pMesh, VERTEX_TYPE type)
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 	}
-	else if (m_VertexType == VERTEX_TYPE::VERTEX_POSITION_UV && pMesh->IsDataValid(m_VertexType))
+	else if (m_VertexType == VERTEX_TYPE::VERTEX_INDEX_POSITION_UV && pMesh->IsDataValid(m_VertexType))
 	{
 		glBufferData(GL_ARRAY_BUFFER, m_pMeshData->m_Positions.size() * sizeof(float) + m_pMeshData->m_UVs.size() * sizeof(float), nullptr, GL_STATIC_DRAW);
 

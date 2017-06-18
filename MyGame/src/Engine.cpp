@@ -9,9 +9,8 @@ CEngine::CEngine()
 
 	m_gWindow = nullptr;
 	m_gResourceFactory = nullptr;
-	m_gGameObjeectMgr = nullptr;
+	m_gSceneMgr = nullptr;
 	m_gFileSys = nullptr;
-	m_gShaderMgr = nullptr;
 	m_gCamera = nullptr;
 
 	m_gScreenWidth = 800;
@@ -21,10 +20,9 @@ CEngine::CEngine()
 CEngine::~CEngine()
 {
 	DELETE_PTR(m_gFileSys);
-	DELETE_PTR(m_gShaderMgr);
 	DELETE_PTR(m_gCamera);
 	
-	DELETE_PTR(m_gGameObjeectMgr);
+	DELETE_PTR(m_gSceneMgr);
 	DELETE_PTR(m_gResourceFactory);
 
 	glfwDestroyWindow(m_gWindow);
@@ -57,13 +55,12 @@ int CEngine::Init()
 
 	m_gResourceFactory = new CResourceFactory();
 
-	m_gGameObjeectMgr = new CGameObjectManager();
+	m_gSceneMgr = new CSceneManager();
 
 	m_gFileSys = new CFileSystem();
 	m_gFileSys->SetBaseDirectoryName("MyGame");
 
-	m_gShaderMgr = new CShaderManager();
-	m_gShaderMgr->Init();
+	CBuildInResource::Regsiter();
 
 	m_gCamera = new CCamera(800, 600);
 
@@ -73,6 +70,12 @@ int CEngine::Init()
 void CEngine::Update()
 {
 	m_gCamera->Update();
+	m_gSceneMgr->Update();
+}
+
+void CEngine::Draw()
+{
+	m_gSceneMgr->Draw();
 }
 
 void CEngine::Resize(int width, int height)
@@ -80,10 +83,12 @@ void CEngine::Resize(int width, int height)
 	glViewport(0, 0, m_gScreenWidth, m_gScreenHeight);
 }
 
-void CEngine::ProcessInput(GLFWwindow * window)
+void CEngine::ProcessEvent()
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(m_gWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(m_gWindow, true);
+
+	m_gSceneMgr->ProcessEvent(m_gWindow);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -103,5 +108,5 @@ CResourceFactory * GetResourceFactory()
 
 void AddGameObject(IGameObject * pObj)
 {
-	CEngine::GetEngine()->m_gGameObjeectMgr->AddGameObject(pObj);
+	CEngine::GetEngine()->m_gSceneMgr->AddGameObject(pObj);
 }

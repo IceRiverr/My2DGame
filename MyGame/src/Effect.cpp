@@ -60,50 +60,6 @@ uint LinkShaderProgram(uint vs, uint ps)
 	return shaderProgram;
 }
 
-CShaderManager::CShaderManager()
-{
-}
-
-CShaderManager::~CShaderManager()
-{
-	for (auto it = m_Shaders.begin(); it != m_Shaders.end();)
-	{
-		RELEASE_PTR(it->second);
-		m_Shaders.erase(it++);
-	}
-}
-
-void CShaderManager::Init()
-{
-	CShader* pSolidColorVS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pSolidColorVS->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\SolidColorVS.glsl");
-	pSolidColorVS->AddRef();
-	m_Shaders.insert(std::pair<std::string, CShader*>("SolidColorVS", pSolidColorVS));
-
-	CShader* pSolidColorPS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pSolidColorPS->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\SolidColorPS.glsl");
-	pSolidColorPS->AddRef();
-	m_Shaders.insert(std::pair<std::string, CShader*>("SolidColorPS", pSolidColorPS));
-
-	CShader* pSimpleVS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pSimpleVS->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\SimpleVS.glsl");
-	pSimpleVS->AddRef();
-	m_Shaders.insert(std::pair<std::string, CShader*>("SimpleVS", pSimpleVS));
-
-	CShader* pSimplePS = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pSimplePS->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\SimplePS.glsl");
-	pSimplePS->AddRef();
-	m_Shaders.insert(std::pair<std::string, CShader*>("SimplePS", pSimplePS));
-}
-
-CShader * CShaderManager::GetShader(std::string name)
-{
-	auto it = m_Shaders.find(name);
-	if (it != m_Shaders.end())
-		return it->second;
-	return nullptr;
-}
-
 CShader::CShader()
 	: IResource()
 	, m_Shader(0)
@@ -175,8 +131,10 @@ CSpriteEffect::~CSpriteEffect()
 
 void CSpriteEffect::Init()
 {
-	CShaderManager* shaderMgr = CEngine::GetEngine()->m_gShaderMgr;
-	LinkShader(shaderMgr->GetShader("SimpleVS"), shaderMgr->GetShader("SimplePS"));
+	LinkShader(
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SIMPLE_VS),
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SIMPLE_PS)
+	);
 
 	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
 	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");
@@ -203,8 +161,10 @@ CSolidColorEffect::~CSolidColorEffect()
 
 void CSolidColorEffect::Init()
 {
-	CShaderManager* shaderMgr = CEngine::GetEngine()->m_gShaderMgr;
-	LinkShader(shaderMgr->GetShader("SolidColorVS"), shaderMgr->GetShader("SolidColorPS"));
+	LinkShader(
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SOLID_COLOR_VS),
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SOLID_COLOR_PS)
+	);
 
 	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
 	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");

@@ -46,6 +46,12 @@
     <ClInclude Include="..\src\Resource.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\GamePlayObject.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TypeDefine.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SolidColorPS.glsl">
@@ -93,6 +99,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Resource.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GamePlayObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

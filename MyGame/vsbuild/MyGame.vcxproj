@@ -25,10 +25,12 @@
     <ClInclude Include="..\src\Engine.h" />
     <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\GameObject.h" />
+    <ClInclude Include="..\src\GamePlayObject.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\Shape.h" />
     <ClInclude Include="..\src\SmartPointer.h" />
+    <ClInclude Include="..\src\TypeDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SimplePS.glsl" />
@@ -42,6 +44,7 @@
     <ClCompile Include="..\src\Engine.cpp" />
     <ClCompile Include="..\src\FileSystem.cpp" />
     <ClCompile Include="..\src\GameObject.cpp" />
+    <ClCompile Include="..\src\GamePlayObject.cpp" />
     <ClCompile Include="..\src\glad.c" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Resource.cpp" />

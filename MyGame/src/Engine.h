@@ -21,8 +21,9 @@ public:
 
 	int Init();
 	void Update();
+	void Draw();
 	void Resize(int width, int height);
-	void ProcessInput(GLFWwindow* window);
+	void ProcessEvent();
 
 	static CEngine* GetEngine() { return m_sEngine; };
 
@@ -30,14 +31,13 @@ public:
 	int					m_gScreenWidth;
 	int					m_gScreenHeight;
 	GLFWwindow*			m_gWindow;
-	CShaderManager*		m_gShaderMgr;
 	CCamera*			m_gCamera;
 
 private:
 	static CEngine*		m_sEngine;
 	
 	CResourceFactory*	m_gResourceFactory;
-	CGameObjectManager*	m_gGameObjeectMgr;
+	CSceneManager*		m_gSceneMgr;
 	CFileSystem*		m_gFileSys;
 };
 

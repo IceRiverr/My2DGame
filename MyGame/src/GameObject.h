@@ -13,11 +13,15 @@
 
 class IGameObject;
 
-class CGameObjectManager
+class CSceneManager
 {
 public:
-	CGameObjectManager();
-	~CGameObjectManager();
+	CSceneManager();
+	~CSceneManager();
+
+	void Update();
+	void Draw();
+	void ProcessEvent(GLFWwindow* window);
 	
 	void AddGameObject(IGameObject* obj);
 private:
@@ -47,9 +51,12 @@ public:
 	void ProcessInput(GLFWwindow* window);
 
 	void SetShape(CShape* pShape);
+	void SetPosiiton(float x, float y, float z);
 	void SetPosiiton(const glm::vec3& pos);
 	void SetRotate(float angle);
 	void SetScale(float scale);
+
+	const glm::vec3& GetPosition() const {return m_vPosition;}
 
 protected:
 	CShape*			m_pShape;
@@ -73,8 +80,11 @@ public:
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 	
-	void SetEffect(CSpriteEffect* pEffect);
 	void SetSprite(CTexture2D* pSprite);
+
+protected:
+	void SetEffect(CSpriteEffect* pEffect);
+
 protected:
 	CSpriteEffect*		m_pEffect;
 	CTexture2D*			m_pSprite;
@@ -92,17 +102,20 @@ public:
 	void ProcessInput(GLFWwindow* window);
 	
 	void SetColor(const glm::vec4& color);
+
+protected:
 	void SetEffect(CSolidColorEffect* pEffect);
+
 protected:
 	CSolidColorEffect*	m_pEffect;
 	glm::vec4			m_vColor;
 };
 
-class CLineShape : public CSolidColorObject
+class CLineObject : public CSolidColorObject
 {
 public:
-	CLineShape();
-	~CLineShape();
+	CLineObject();
+	~CLineObject();
 
 	void Draw();
 };

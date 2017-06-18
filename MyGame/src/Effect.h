@@ -14,21 +14,6 @@
 uint LinkShaderProgram(uint vs, uint ps);
 uint CreateShader(GLenum type, std::string shaderFile);
 
-class CShader;
-class CShaderManager
-{
-public:
-	CShaderManager();
-	~CShaderManager();
-	void Init();
-	
-	// note: AddRef
-	CShader* GetShader(std::string name);
-
-private:
-	std::map<std::string, CShader*> m_Shaders;
-};
-
 class CShader : public IResource
 {
 public:
