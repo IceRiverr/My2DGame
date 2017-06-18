@@ -19,11 +19,11 @@ CSceneManager::~CSceneManager()
 	}
 }
 
-void CSceneManager::Update()
+void CSceneManager::Update(float dt)
 {
 	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end(); ++it)
 	{
-		(*it)->Update();
+		(*it)->Update(dt);
 	}
 }
 
@@ -77,7 +77,7 @@ void CBaseObject::Init()
 {
 }
 
-void CBaseObject::Update()
+void CBaseObject::Update(float dt)
 {
 	if (m_bMatrixDirty)
 	{
@@ -148,9 +148,9 @@ void CSpriteObject::Init()
 	SetEffect(CBuildInResource::GetResource<CSpriteEffect>(CBuildInResource::EFFECT_SPRITE));
 }
 
-void CSpriteObject::Update()
+void CSpriteObject::Update(float dt)
 {
-	CBaseObject::Update();
+	CBaseObject::Update(dt);
 }
 
 void CSpriteObject::Draw()
@@ -201,9 +201,9 @@ void CSolidColorObject::Init()
 	SetEffect(CBuildInResource::GetResource<CSolidColorEffect>(CBuildInResource::EFFECT_SOLID_COLOR));
 }
 
-void CSolidColorObject::Update()
+void CSolidColorObject::Update(float dt)
 {
-	CBaseObject::Update();
+	CBaseObject::Update(dt);
 }
 
 void CSolidColorObject::Draw()

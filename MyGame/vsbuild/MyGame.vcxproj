@@ -26,6 +26,7 @@
     <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\GamePlayObject.h" />
+    <ClInclude Include="..\src\Physics2DLib.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\Shape.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="..\src\GamePlayObject.cpp" />
     <ClCompile Include="..\src\glad.c" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Physics2DLib.cpp" />
     <ClCompile Include="..\src\Resource.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\Shape.cpp" />

@@ -19,7 +19,7 @@ public:
 	CSceneManager();
 	~CSceneManager();
 
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void ProcessEvent(GLFWwindow* window);
 	
@@ -34,7 +34,7 @@ class IGameObject
 public:
 	virtual ~IGameObject() {}
 	virtual void Init() = 0;
-	virtual	void Update() = 0;
+	virtual	void Update(float dt) = 0;
 	virtual void Draw() = 0;
 	virtual void ProcessInput(GLFWwindow* window) = 0;
 };
@@ -46,7 +46,7 @@ public:
 	~CBaseObject();
 
 	void Init();
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 
@@ -76,7 +76,7 @@ public:
 	~CSpriteObject();
 
 	void Init();
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 	
@@ -97,7 +97,7 @@ public:
 	~CSolidColorObject();
 
 	void Init();
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 	

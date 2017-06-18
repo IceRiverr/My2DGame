@@ -52,6 +52,9 @@
     <ClInclude Include="..\src\TypeDefine.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Physics2DLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SolidColorPS.glsl">
@@ -102,6 +105,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\GamePlayObject.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Physics2DLib.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

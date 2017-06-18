@@ -46,7 +46,7 @@ void CCamera::SetClipPlan(float near, float far)
 	m_bProjDirty = true;
 }
 
-void CCamera::Update()
+void CCamera::Update(float dt)
 {
 	if (m_bViewDirty == true)
 	{

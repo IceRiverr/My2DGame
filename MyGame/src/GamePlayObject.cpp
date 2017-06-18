@@ -3,7 +3,7 @@
 
 CPlayer::CPlayer()
 {
-
+	m_fAttackRange = 128.0f;
 }
 
 CPlayer::~CPlayer()
@@ -11,11 +11,9 @@ CPlayer::~CPlayer()
 
 }
 
-void CPlayer::Update()
+void CPlayer::Update(float dt)
 {
-
-
-	CSpriteObject::Update();
+	CSpriteObject::Update(dt);
 }
 
 void CPlayer::Draw()
@@ -37,12 +35,19 @@ void CPlayer::ProcessInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		m_vPosition.y -= 1.0f;
 
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		m_bActive = true;
+	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+		m_bActive = false;
+	
 	m_bMatrixDirty = true;
 }
 
 CBoxEnemy::CBoxEnemy()
 {
-
+	m_fRotateSpeed = 500.0f;
+	m_vMoveDir = glm::vec3();
+	m_fMaxMoveSpeed = 100.0f;
 }
 
 CBoxEnemy::~CBoxEnemy()
@@ -56,37 +61,55 @@ void CBoxEnemy::Init()
 	SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
 }
 
-void CBoxEnemy::Update()
+void CBoxEnemy::Update(float dt)
 {
 	if (m_pTarget)
 	{
-		float spped = 0.5f;
 		glm::vec3 dir = m_pTarget->GetPosition() - GetPosition();
 		dir.z = 0.0f;
 		float length = glm::length(dir);
 
 		dir = glm::normalize(dir);
-		m_vPosition += dir * spped;
+
+		float fAttackArange = m_pTarget->GetAttackRange();
+
+		if (length < fAttackArange && m_pTarget->IsAttack())
+		{
+			m_vMoveDir = -dir * m_fMaxMoveSpeed;
+		}
+		else
+		{
+			m_vMoveDir += dir * m_fRotateSpeed *  dt;
+			float moveSpeed = glm::length(m_vMoveDir);
+			m_vMoveDir /= moveSpeed;
+			m_vMoveDir *= m_fMaxMoveSpeed;
+		}
+
+		m_vPosition += m_vMoveDir * dt;
 		SetPosiiton(m_vPosition);
-		
+
 		float red = 0.0f;
-		if (length < 100.0f)
-			red = 1.0f - length / 100.0f;
+		if (length < fAttackArange)
+			red = 1.0f - length / fAttackArange;
 		else
 			red = 0.0f;
 		SetColor(glm::vec4(red, m_vColor.g, m_vColor.b, m_vColor.a));
 	}
 
-	CSolidColorObject::Update();
+	CSolidColorObject::Update(dt);
 }
 
 void CBoxEnemy::Draw()
 {
 	CSolidColorObject::Draw();
-
 }
 
-void CBoxEnemy::SetTarget(CBaseObject* pTarget)
+void CBoxEnemy::SetTarget(CPlayer* pTarget)
 {
 	m_pTarget = pTarget;
+}
+
+void CBoxEnemy::SetMoveDir(const glm::vec3& dir)
+{
+	m_vMoveDir = dir;
 }

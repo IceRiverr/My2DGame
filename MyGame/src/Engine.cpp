@@ -67,10 +67,10 @@ int CEngine::Init()
 	return 0;
 }
 
-void CEngine::Update()
+void CEngine::Update(float dt)
 {
-	m_gCamera->Update();
-	m_gSceneMgr->Update();
+	m_gCamera->Update(dt);
+	m_gSceneMgr->Update(dt);
 }
 
 void CEngine::Draw()

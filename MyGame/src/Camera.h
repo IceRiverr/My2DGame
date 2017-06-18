@@ -11,7 +11,7 @@ public:
 	CCamera(int width, int height, float near, float far);
 	~CCamera();
 	
-	void Update();
+	void Update(float dt);
 	void Resize(int width, int height);
 
 	void SetPosition(const glm::vec3& pos);

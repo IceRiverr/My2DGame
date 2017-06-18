@@ -9,11 +9,15 @@ public:
 	CPlayer();
 	~CPlayer();
 
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
-private:
 
+	bool IsAttack()			{ return m_bActive; }
+	float GetAttackRange()	{ return m_fAttackRange; }
+private:
+	float	m_fAttackRange;
+	bool	m_bActive;
 };
 
 class CBoxEnemy : public CSolidColorObject
@@ -23,12 +27,15 @@ public:
 	~CBoxEnemy();
 	
 	void Init();
-	void Update();
+	void Update(float dt);
 	void Draw();
 
-	void SetTarget(CBaseObject* pTarget);
+	void SetTarget(CPlayer* pTarget);
+	void SetMoveDir(const glm::vec3& dir);
 
 private:
-	CBaseObject* m_pTarget;
-
+	CPlayer*		m_pTarget;
+	glm::vec3		m_vMoveDir;
+	float			m_fRotateSpeed;
+	float			m_fMaxMoveSpeed;
 };

@@ -20,7 +20,7 @@ public:
 	~CEngine();
 
 	int Init();
-	void Update();
+	void Update(float dt);
 	void Draw();
 	void Resize(int width, int height);
 	void ProcessEvent();
