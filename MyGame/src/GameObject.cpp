@@ -178,7 +178,7 @@ void CSpriteObject::SetEffect(CSpriteEffect* pEffect)
 	m_pEffect->AddRef();
 }
 
-void CSpriteObject::SetSprite(CTexture2D * pSprite)
+void CSpriteObject::SetSprite(ITexture * pSprite)
 {
 	RELEASE_PTR(m_pSprite);
 	m_pSprite = pSprite;

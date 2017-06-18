@@ -9,3 +9,5 @@ MyGame/bin/MyGame.exe
 *.user
 *.tlog
 *.TMP
+*.ttf
+*.ttc

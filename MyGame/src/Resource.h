@@ -22,9 +22,8 @@ enum RESOURCE_TYPE
 class IResource : public CRefCounter<IResource>
 {
 public:
-	IResource();
-	~IResource();
-private:
+	IResource() : CRefCounter(this) {}
+	~IResource() {}
 };
 
 class CResourceFactory

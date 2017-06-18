@@ -5,15 +5,6 @@
 #include "Texture.h"
 #include "Engine.h"
 
-IResource::IResource()
-	: CRefCounter(this)
-{
-}
-
-IResource::~IResource()
-{
-}
-
 CResourceFactory::CResourceFactory()
 {
 

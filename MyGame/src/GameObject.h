@@ -80,14 +80,14 @@ public:
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 	
-	void SetSprite(CTexture2D* pSprite);
+	void SetSprite(ITexture* pSprite);
 
 protected:
 	void SetEffect(CSpriteEffect* pEffect);
 
 protected:
 	CSpriteEffect*		m_pEffect;
-	CTexture2D*			m_pSprite;
+	ITexture*			m_pSprite;
 };
 
 class CSolidColorObject : public CBaseObject
@@ -118,4 +118,12 @@ public:
 	~CLineObject();
 
 	void Draw();
+};
+
+class CTextObject : public CSpriteObject
+{
+public:
+	
+private:
+
 };

@@ -143,4 +143,18 @@ void InitScene()
 	pFillCircle->SetScale(32.0f);
 	pFillCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE));
 	pFillCircle->SetColor(glm::vec4(0.2f, 0.5f, 0.1f, 1.0f));
+
+	// CTexture2D 
+	
+	wchar_t* chinese_str = L"·±";
+	CCharTexture* pCharTexture = GetResourceFactory()->Create<CCharTexture>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	pCharTexture->Init(chinese_str[0]);
+
+	CTextObject* pText = new CTextObject();
+	AddGameObject(pText);
+	pText->Init();
+	pText->SetScale(32.0f);
+	pText->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
+	pText->SetSprite(pCharTexture);
+	pText->SetPosiiton(-200.0f, -200.0f, 0.0f);
 }
