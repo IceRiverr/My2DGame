@@ -27,13 +27,13 @@ void CBuildInResource::Regsiter()
 {
 	// SHADER_SIMPLE_VS
 	CShader* pShader = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pShader->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\SimpleVS.glsl");
-	m_LookUpTable.insert(std::pair<TYPE, IResource*>(SHADER_SIMPLE_VS, pShader));
+	pShader->Init(GL_VERTEX_SHADER, GetBaseDirectory() + "shader\\DefaultVS.glsl");
+	m_LookUpTable.insert(std::pair<TYPE, IResource*>(SHADER_DEFAULT_VS, pShader));
 	
 	// SHADER_SIMPLE_PS
 	pShader = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
-	pShader->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\SimplePS.glsl");
-	m_LookUpTable.insert(std::pair<TYPE, IResource*>(SHADER_SIMPLE_PS, pShader));
+	pShader->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\DefaultPS.glsl");
+	m_LookUpTable.insert(std::pair<TYPE, IResource*>(SHADER_DEFAULT_PS, pShader));
 
 	// SHADER_SOLID_COLOR_VS
 	pShader = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);

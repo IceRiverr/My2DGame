@@ -12,6 +12,7 @@ CEngine::CEngine()
 	m_gSceneMgr = nullptr;
 	m_gFileSys = nullptr;
 	m_gCamera = nullptr;
+	m_gFontLib = nullptr;
 
 	m_gScreenWidth = 800;
 	m_gScreenHeight = 600;
@@ -24,6 +25,8 @@ CEngine::~CEngine()
 	
 	DELETE_PTR(m_gSceneMgr);
 	DELETE_PTR(m_gResourceFactory);
+
+	DELETE_PTR(m_gFontLib);
 
 	glfwDestroyWindow(m_gWindow);
 	m_gWindow = nullptr;
@@ -63,6 +66,9 @@ int CEngine::Init()
 	CBuildInResource::Regsiter();
 
 	m_gCamera = new CCamera(800, 600);
+
+	m_gFontLib = new CFontLib();
+	m_gFontLib->Init();
 
 	return 0;
 }

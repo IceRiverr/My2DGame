@@ -15,19 +15,16 @@ vs2015 debug 64
 支持纯色
 支持文字
 
-http://blog.sina.com.cn/s/blog_557bc4650102v98n.html
-VS2013 编译程序时提示 无法查找或打开 PDB 文件
-
 使用 freetype-2.8 渲染字体
 http://learnopengl-cn.readthedocs.io/zh/latest/06%20In%20Practice/02%20Text%20Rendering/
 https://learnopengl.com/#!In-Practice/Text-Rendering
 
-release 警告
-1>LINK : warning LNK4098: 默认库“MSVCRTD”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
-解决 VS2008解决“MSVCRT”与其他库的使用冲突的警告
-http://blog.csdn.net/iesneaker/article/details/6524459
-还有警告
+注意这些 游戏库
+http://blog.csdn.net/xiaoxiaoyeyaya/article/details/42541419
 
+fmod 声音库
+音频引擎FMOD学习记录
+http://blog.csdn.net/fengyhack/article/details/43318575
 
 
 

@@ -84,8 +84,7 @@ void CShader::Delete()
 }
 
 CEffect::CEffect()
-	: IResource()
-	, m_ShaderProgram(0)
+	: m_ShaderProgram(0)
 	, m_VertexShader(nullptr)
 	, m_FragmentShader(nullptr)
 {
@@ -119,7 +118,6 @@ void CEffect::LinkShader(CShader * vs, CShader * ps)
 }
 
 CSpriteEffect::CSpriteEffect()
-	: CEffect()
 {
 
 }
@@ -132,14 +130,15 @@ CSpriteEffect::~CSpriteEffect()
 void CSpriteEffect::Init()
 {
 	LinkShader(
-		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SIMPLE_VS),
-		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_SIMPLE_PS)
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_DEFAULT_VS),
+		CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_DEFAULT_PS)
 	);
 
 	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
 	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");
 	m_ProjectMatLocation = glGetUniformLocation(m_ShaderProgram, "projectMat");
-	m_SrcTexLocation = glGetUniformLocation(m_ShaderProgram, "spriteTexture2D");
+	
+	m_SpriteTexLocation = glGetUniformLocation(m_ShaderProgram, "Sprite2D");
 }
 
 void CSpriteEffect::BindParameters(const glm::mat4 & model)
@@ -147,11 +146,11 @@ void CSpriteEffect::BindParameters(const glm::mat4 & model)
 	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
 	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
-	glUniform1i(m_SrcTexLocation, 0);
+	
+	glUniform1i(m_SpriteTexLocation, 0);
 }
 
 CSolidColorEffect::CSolidColorEffect()
-	: CEffect()
 {
 }
 
@@ -178,4 +177,40 @@ void CSolidColorEffect::BindParameters(const glm::mat4 & model, glm::vec4 vertex
 	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
 	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
 	glUniform4f(m_VertexColorLocation, vertexColor.r, vertexColor.g, vertexColor.b,vertexColor.a);
+}
+
+CFontEffect::CFontEffect()
+{
+
+}
+
+CFontEffect::~CFontEffect()
+{
+
+}
+
+void CFontEffect::Init()
+{
+	CShader* pVSShader = CBuildInResource::GetResource<CShader>(CBuildInResource::SHADER_DEFAULT_VS);
+	CShader* pPSShader = pPSShader = GetResourceFactory()->Create<CShader>(RESOURCE_TYPE::RESOURCE_SHADER);
+	pPSShader->Init(GL_FRAGMENT_SHADER, GetBaseDirectory() + "shader\\FontPS.glsl");
+
+	LinkShader(pVSShader, pPSShader);
+
+	m_ModelMatLocation = glGetUniformLocation(m_ShaderProgram, "modelMat");
+	m_ViewMatLocation = glGetUniformLocation(m_ShaderProgram, "viewMat");
+	m_ProjectMatLocation = glGetUniformLocation(m_ShaderProgram, "projectMat");
+
+	m_CharacterTexLocation = glGetUniformLocation(m_ShaderProgram, "CharacterTex");
+	m_FontColorLocation = glGetUniformLocation(m_ShaderProgram, "FontColor");
+}
+
+void CFontEffect::BindParameters(const glm::mat4& model, glm::vec3 fontColor)
+{
+	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
+	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
+
+	glUniform1i(m_CharacterTexLocation, 0);
+	glUniform3f(m_FontColorLocation, fontColor.r, fontColor.g, fontColor.b);
 }

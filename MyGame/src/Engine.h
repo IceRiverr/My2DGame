@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "FileSystem.h"
 #include "GameObject.h"
+#include "FontLib.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -32,6 +33,7 @@ public:
 	int					m_gScreenHeight;
 	GLFWwindow*			m_gWindow;
 	CCamera*			m_gCamera;
+	CFontLib*			m_gFontLib;
 
 private:
 	static CEngine*		m_sEngine;

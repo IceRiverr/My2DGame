@@ -52,6 +52,9 @@
     <ClInclude Include="..\src\Physics2DLib.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\FontLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SolidColorPS.glsl">
@@ -60,10 +63,13 @@
     <None Include="..\shader\SolidColorVS.glsl">
       <Filter>shader</Filter>
     </None>
-    <None Include="..\shader\SimplePS.glsl">
+    <None Include="..\shader\FontPS.glsl">
       <Filter>shader</Filter>
     </None>
-    <None Include="..\shader\SimpleVS.glsl">
+    <None Include="..\shader\DefaultPS.glsl">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="..\shader\DefaultVS.glsl">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>
@@ -101,7 +107,7 @@
     <ClCompile Include="..\src\Physics2DLib.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\build.cpp">
+    <ClCompile Include="..\src\FontLib.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -39,11 +39,16 @@ public:
 	void Init(CMeshData* pMesh, VERTEX_TYPE type);
 	void Bind();
 
+	void SetVBUsage(uint usage);
 	const CMeshData* GetMeshData() const { return m_pMeshData; }
+	CMeshData* GetMeshData() { return m_pMeshData; }
+
+	uint GetVBO() { return m_VBO; }
 
 private:
 	CMeshData*			m_pMeshData;
 	VERTEX_TYPE			m_VertexType;
+	uint				m_VertexBufferUsage;
 
 	uint				m_VAO;
 	uint				m_VBO;

@@ -62,7 +62,7 @@ public:
 	void BindParameters(const glm::mat4& model);
 
 private:
-	int m_SrcTexLocation;
+	int m_SpriteTexLocation;
 };
 
 class CSolidColorEffect : public CEffect
@@ -76,4 +76,18 @@ public:
 
 private:
 	int m_VertexColorLocation;
+};
+
+class CFontEffect : public CEffect
+{
+public:
+	CFontEffect();
+	~CFontEffect();
+
+	void Init();
+	void BindParameters(const glm::mat4& model, glm::vec3 fontColor);
+
+private:
+	int m_CharacterTexLocation;
+	int m_FontColorLocation;
 };

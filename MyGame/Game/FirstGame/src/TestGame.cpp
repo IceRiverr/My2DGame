@@ -60,10 +60,15 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		g_pEngine->Draw();
+
+		CEngine::GetEngine()->m_gFontLib->Draw();
 
 		glfwPollEvents();
 		glfwSwapBuffers(CEngine::GetEngine()->m_gWindow);
@@ -73,7 +78,7 @@ int main()
 
 	DELETE_PTR(g_pEngine);
 
-	getchar();
+	//getchar();
 
 	return 0;
 }
@@ -166,11 +171,15 @@ void InitScene()
 	CCharTexture* pCharTexture = GetResourceFactory()->Create<CCharTexture>(RESOURCE_TYPE::RESOURCE_TEXTURE);
 	pCharTexture->Init(chinese_str[0]);
 
+	CCharTexture* pTestCharTex = CEngine::GetEngine()->m_gFontLib->Get_ASCII_Texture('H');
+
 	CTextObject* pText = new CTextObject();
 	AddGameObject(pText);
 	pText->Init();
 	pText->SetScale(32.0f);
 	pText->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
-	pText->SetSprite(pCharTexture);
+	pText->SetSprite(pTestCharTex);
 	pText->SetPosiiton(-200.0f, -200.0f, 0.0f);
+
+	CFontLib::DrawTextAt("I have a good night.", 10, 200, 32);
 }

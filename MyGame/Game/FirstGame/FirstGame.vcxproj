@@ -69,12 +69,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>D:\Projects\My2DGame\MyGame\bin_d</OutDir>
+    <OutDir>D:\Projects\My2DGame\MyGame\bin_d\</OutDir>
     <IncludePath>D:\Projects\My2DGame\MyGame\include;D:\Projects\My2DGame\MyGame\src;D:\SDKs\freetype-2.8\include;D:\SDKs\glfw-3.2.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Projects\My2DGame\MyGame\bin_d;D:\SDKs\glfw-3.2.1\lib\x64;D:\SDKs\freetype-2.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>D:\Projects\My2DGame\MyGame\bin</OutDir>
+    <OutDir>D:\Projects\My2DGame\MyGame\bin\</OutDir>
     <IncludePath>D:\SDKs\glfw-3.2.1\include;D:\Projects\My2DGame\MyGame\include;D:\Projects\My2DGame\MyGame\src;D:\SDKs\freetype-2.8\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDKs\freetype-2.8\lib\x64;D:\Projects\My2DGame\MyGame\bin;D:\SDKs\glfw-3.2.1\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

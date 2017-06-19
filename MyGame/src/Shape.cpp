@@ -27,6 +27,7 @@ bool CMeshData::IsDataValid(VERTEX_TYPE type)
 CShape::CShape()
 	: IResource()
 	, m_pMeshData(nullptr)
+	, m_VertexBufferUsage(GL_STATIC_DRAW)
 {
 	
 }
@@ -58,7 +59,7 @@ void CShape::Init(CMeshData* pMesh, VERTEX_TYPE type)
 
 	if (m_VertexType == VERTEX_TYPE::VERTEX_INDEX_POSITION && pMesh->IsDataValid(m_VertexType))
 	{
-		glBufferData(GL_ARRAY_BUFFER, m_pMeshData->m_Positions.size() * sizeof(float), nullptr, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_pMeshData->m_Positions.size() * sizeof(float), nullptr, m_VertexBufferUsage);
 
 		glBufferSubData(GL_ARRAY_BUFFER, 0,
 			m_pMeshData->m_Positions.size() * sizeof(float),
@@ -103,3 +104,7 @@ void CShape::Bind()
 	glBindVertexArray(m_VAO);
 }
 
+void CShape::SetVBUsage(uint usage)
+{
+	m_VertexBufferUsage = usage;
+}
