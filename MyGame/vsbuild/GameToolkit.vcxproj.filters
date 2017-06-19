@@ -46,9 +46,6 @@
     <ClInclude Include="..\src\Resource.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\GamePlayObject.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\TypeDefine.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -72,9 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\glad.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Effect.cpp">
@@ -104,10 +98,10 @@
     <ClCompile Include="..\src\Resource.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GamePlayObject.cpp">
+    <ClCompile Include="..\src\Physics2DLib.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Physics2DLib.cpp">
+    <ClCompile Include="..\src\build.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

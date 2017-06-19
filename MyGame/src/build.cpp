@@ -1,0 +1,12 @@
+
+#include "Camera.h"
+#include "Effect.h"
+#include "Engine.h"
+#include "FileSystem.h"
+#include "GameObject.h"
+#include "Physics2DLib.h"
+#include "Resource.h"
+#include "Shape.h"
+#include "SmartPointer.h"
+#include "Texture.h"
+#include "TypeDefine.h"

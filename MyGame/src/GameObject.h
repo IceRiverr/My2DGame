@@ -37,6 +37,8 @@ public:
 	virtual	void Update(float dt) = 0;
 	virtual void Draw() = 0;
 	virtual void ProcessInput(GLFWwindow* window) = 0;
+	virtual void SetDestroyFlag() = 0;
+	virtual bool GetDestroyFlag() { return false; }
 };
 
 class CBaseObject : public IGameObject
@@ -55,6 +57,8 @@ public:
 	void SetPosiiton(const glm::vec3& pos);
 	void SetRotate(float angle);
 	void SetScale(float scale);
+	void SetDestroyFlag();
+	bool GetDestroyFlag();
 
 	const glm::vec3& GetPosition() const {return m_vPosition;}
 
@@ -67,6 +71,7 @@ protected:
 	glm::mat4		m_mModelMatrix;
 
 	bool			m_bMatrixDirty;
+	bool			m_bDestroyFlag;
 };
 
 class CSpriteObject : public CBaseObject

@@ -21,9 +21,20 @@ CSceneManager::~CSceneManager()
 
 void CSceneManager::Update(float dt)
 {
-	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end(); ++it)
+	for (auto it = m_GameObjectPool.begin(); it != m_GameObjectPool.end();)
 	{
-		(*it)->Update(dt);
+		IGameObject* obj = *it;
+		if (obj->GetDestroyFlag())
+		{
+			DELETE_PTR(obj);
+			m_GameObjectPool.erase(it);
+			it = m_GameObjectPool.begin();
+		}
+		else
+		{
+			obj->Update(dt);
+			++it;
+		}
 	}
 }
 
@@ -63,6 +74,7 @@ CBaseObject::CBaseObject()
 	, m_fRotate(0.0f)
 	, m_fScale(1.0f)
 	, m_bMatrixDirty(true)
+	, m_bDestroyFlag(false)
 {
 
 }
@@ -128,6 +140,16 @@ void CBaseObject::SetScale(float scale)
 {
 	m_fScale = scale;
 	m_bMatrixDirty = true;
+}
+
+void CBaseObject::SetDestroyFlag()
+{
+	m_bDestroyFlag = true;
+}
+
+bool CBaseObject::GetDestroyFlag()
+{
+	return m_bDestroyFlag;
 }
 
 CSpriteObject::CSpriteObject()

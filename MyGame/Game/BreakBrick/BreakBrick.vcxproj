@@ -18,45 +18,9 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\include\stb_image.h" />
-    <ClInclude Include="..\src\Camera.h" />
-    <ClInclude Include="..\src\Effect.h" />
-    <ClInclude Include="..\src\Engine.h" />
-    <ClInclude Include="..\src\FileSystem.h" />
-    <ClInclude Include="..\src\GameObject.h" />
-    <ClInclude Include="..\src\GamePlayObject.h" />
-    <ClInclude Include="..\src\Physics2DLib.h" />
-    <ClInclude Include="..\src\Resource.h" />
-    <ClInclude Include="..\src\Texture.h" />
-    <ClInclude Include="..\src\Shape.h" />
-    <ClInclude Include="..\src\SmartPointer.h" />
-    <ClInclude Include="..\src\TypeDefine.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\shader\SimplePS.glsl" />
-    <None Include="..\shader\SimpleVS.glsl" />
-    <None Include="..\shader\SolidColorPS.glsl" />
-    <None Include="..\shader\SolidColorVS.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\Camera.cpp" />
-    <ClCompile Include="..\src\Effect.cpp" />
-    <ClCompile Include="..\src\Engine.cpp" />
-    <ClCompile Include="..\src\FileSystem.cpp" />
-    <ClCompile Include="..\src\GameObject.cpp" />
-    <ClCompile Include="..\src\GamePlayObject.cpp" />
-    <ClCompile Include="..\src\glad.c" />
-    <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\Physics2DLib.cpp" />
-    <ClCompile Include="..\src\Resource.cpp" />
-    <ClCompile Include="..\src\Texture.cpp" />
-    <ClCompile Include="..\src\Shape.cpp" />
-    <ClCompile Include="..\src\SmartPointer.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D8505C42-E77D-4675-AAC4-5831C8FFC59B}</ProjectGuid>
-    <RootNamespace>MyGame</RootNamespace>
+    <ProjectGuid>{78E749B9-728F-45BA-A82B-A2C55D36E04A}</ProjectGuid>
+    <RootNamespace>FirstGame</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -105,12 +69,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\SDKs\freetype-2.8\include;D:\Projects\My2DGame\MyGame\src;D:\SDKs\glfw-3.2.1\include;D:\Projects\My2DGame\MyGame\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SDKs\freetype-2.8\lib\x64;D:\SDKs\glfw-3.2.1\lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>D:\Projects\My2DGame\MyGame\bin_d</OutDir>
+    <IncludePath>D:\Projects\My2DGame\MyGame\include;D:\Projects\My2DGame\MyGame\src;D:\SDKs\freetype-2.8\include;D:\SDKs\glfw-3.2.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Projects\My2DGame\MyGame\bin_d;D:\SDKs\glfw-3.2.1\lib\x64;D:\SDKs\freetype-2.8\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\SDKs\freetype-2.8\include;D:\Projects\My2DGame\MyGame\src;D:\Projects\My2DGame\MyGame\include;D:\SDKs\glfw-3.2.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SDKs\freetype-2.8\lib\x64;D:\SDKs\glfw-3.2.1\lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>D:\Projects\My2DGame\MyGame\bin</OutDir>
+    <IncludePath>D:\SDKs\glfw-3.2.1\include;D:\Projects\My2DGame\MyGame\include;D:\Projects\My2DGame\MyGame\src;D:\SDKs\freetype-2.8\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\SDKs\freetype-2.8\lib\x64;D:\Projects\My2DGame\MyGame\bin;D:\SDKs\glfw-3.2.1\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3d.lib;OpenGL32.Lib;freetype28d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GameToolkit.lib;glfw3d.lib;freetype28d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,11 +119,16 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glfw3.lib;OpenGL32.Lib;freetype28d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions> /NODEFAULTLIB:"libcmt.lib"</AdditionalOptions>
+      <AdditionalDependencies>GameToolkit.lib;glfw3.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GamePlayObject.cpp" />
+    <ClCompile Include="src\BreakBrick.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GamePlayObject.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

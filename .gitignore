@@ -11,3 +11,10 @@ MyGame/bin/MyGame.exe
 *.TMP
 *.ttf
 *.ttc
+MyGame/bin/
+*.pdb
+*.ilk
+*.lib
+*.log
+*.exe
+*.obj
