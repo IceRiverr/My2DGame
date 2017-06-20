@@ -72,7 +72,7 @@ CBaseObject::CBaseObject()
 	: m_pShape(nullptr)
 	, m_vPosition(0.0f, 0.0f, 0.0f)
 	, m_fRotate(0.0f)
-	, m_fScale(1.0f)
+	, m_vScale(32.0f, 32.0f)
 	, m_bMatrixDirty(true)
 	, m_bDestroyFlag(false)
 {
@@ -96,7 +96,7 @@ void CBaseObject::Update(float dt)
 		m_mModelMatrix = glm::mat4();
 		m_mModelMatrix = glm::translate(m_mModelMatrix, m_vPosition);
 		m_mModelMatrix = glm::rotate(m_mModelMatrix, glm::radians(m_fRotate), glm::vec3(0.0f, 0.0f, 1.0f));
-		m_mModelMatrix = glm::scale(m_mModelMatrix, glm::vec3(m_fScale, m_fScale, m_fScale));
+		m_mModelMatrix = glm::scale(m_mModelMatrix, glm::vec3(m_vScale.x, m_vScale.y, 1.0f));
 		m_bMatrixDirty = false;
 	}
 }
@@ -136,9 +136,10 @@ void CBaseObject::SetRotate(float angle)
 	m_bMatrixDirty = true;
 }
 
-void CBaseObject::SetScale(float scale)
+void CBaseObject::SetScale(float sx, float sy)
 {
-	m_fScale = scale;
+	m_vScale.x = sx;
+	m_vScale.y = sy;
 	m_bMatrixDirty = true;
 }
 

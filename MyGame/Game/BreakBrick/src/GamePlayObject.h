@@ -20,6 +20,22 @@ private:
 	bool	m_bActive;
 };
 
+class CBrick : public CSpriteObject
+{
+public:
+	CBrick();
+	~CBrick();
+
+	void Update(float dt);
+	void Draw();
+	
+private:
+	glm::vec2	m_Size;
+
+};
+
+
+
 class CBoxEnemy : public CSolidColorObject
 {
 public:

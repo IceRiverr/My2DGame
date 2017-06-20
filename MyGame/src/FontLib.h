@@ -30,7 +30,7 @@ public:
 	void Update(float dt);
 	void Draw();
 
-	static void DrawTextAt(const std::string& text, float x, float y, float h = 32.0f, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), float z = 0.0f);
+	static void DrawTextAt(const std::string& text, float x, float y, float h = 16.0f, glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f), float z = 0.0f);
 
 	void Build_ASCII_Table();
 	CCharTexture* Get_ASCII_Texture(uchar c);

@@ -25,6 +25,7 @@ private:
 	float				m_fAttackRange;
 	bool				m_bActive;
 	CAttackGameRule*	m_pRule;
+	std::string			m_Name;
 };
 
 class CBoxEnemy : public CSolidColorObject

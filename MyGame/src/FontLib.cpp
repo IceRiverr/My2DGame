@@ -49,14 +49,15 @@ void CFontLib::Init()
 	m_pShape->Init(pMesh, VERTEX_INDEX_POSITION_UV);
 
 	m_BaseMatrix = glm::mat4();
-	m_BaseMatrix = glm::translate(m_BaseMatrix, glm::vec3(-CEngine::GetEngine()->m_gScreenWidth / 2, -CEngine::GetEngine()->m_gScreenHeight / 2, 0.0f));
+	//m_BaseMatrix = glm::translate(m_BaseMatrix, glm::vec3(-CEngine::GetEngine()->m_gScreenWidth / 2, -CEngine::GetEngine()->m_gScreenHeight / 2, 0.0f));
 	m_BaseMatrix = glm::scale(m_BaseMatrix, glm::vec3(1.0, 1.0, 1.0));
 
-	DrawTextAt("Hello, Boy, Good Night! Long long age, a witcher find a evil method to have dead to live...", 10, 10, 16);
+	
 }
 
 void CFontLib::Update(float dt)
 {
+	
 }
 
 void CFontLib::Draw()
@@ -106,6 +107,8 @@ void CFontLib::Draw()
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	m_TextInfos.clear();
 }
 
 void CFontLib::DrawTextAt(const std::string& text, float x, float y, float h /*= 32.0f*/, glm::vec3 color /*= glm::vec3(0.0f, 0.0f, 0.0f)*/, float z /*= 0.0f*/)

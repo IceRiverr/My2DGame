@@ -1,10 +1,12 @@
 
 #include "GamePlayObject.h"
 #include <iostream>
+#include "FontLib.h"
 
 CPlayer::CPlayer()
 {
 	m_fAttackRange = 128.0f;
+	m_Name = "Amy";
 }
 
 CPlayer::~CPlayer()
@@ -20,6 +22,7 @@ void CPlayer::Update(float dt)
 void CPlayer::Draw()
 {
 	CSpriteObject::Draw();
+	CFontLib::DrawTextAt(m_Name, m_vPosition.x - 16.0f, m_vPosition.y + 36.0f, 16.0f, glm::vec3(1.0f, 0.0f, 1.0f));
 }
 
 void CPlayer::ProcessInput(GLFWwindow* window)

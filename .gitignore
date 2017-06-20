@@ -18,3 +18,4 @@ MyGame/bin/
 *.log
 *.exe
 *.obj
+MyGame/resource/

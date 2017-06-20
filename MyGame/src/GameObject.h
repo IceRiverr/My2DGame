@@ -56,18 +56,21 @@ public:
 	void SetPosiiton(float x, float y, float z);
 	void SetPosiiton(const glm::vec3& pos);
 	void SetRotate(float angle);
-	void SetScale(float scale);
+	void SetScale(float sx = 32.0f, float sy = 32.0f);
 	void SetDestroyFlag();
 	bool GetDestroyFlag();
-
+	
 	const glm::vec3& GetPosition() const {return m_vPosition;}
+
+protected:
+	
 
 protected:
 	CShape*			m_pShape;
 
 	glm::vec3		m_vPosition;
 	float			m_fRotate;
-	float			m_fScale;
+	glm::vec2		m_vScale;
 	glm::mat4		m_mModelMatrix;
 
 	bool			m_bMatrixDirty;
@@ -123,12 +126,4 @@ public:
 	~CLineObject();
 
 	void Draw();
-};
-
-class CTextObject : public CSpriteObject
-{
-public:
-	
-private:
-
 };

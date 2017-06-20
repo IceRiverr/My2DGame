@@ -42,4 +42,3 @@ private:
 	CSceneManager*		m_gSceneMgr;
 	CFileSystem*		m_gFileSys;
 };
-

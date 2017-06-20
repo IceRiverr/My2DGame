@@ -31,8 +31,6 @@ int main()
 	g_pEngine->Init();
 
 	InitScene();
-
-	Test_Other();
 	
 	double gameTime = glfwGetTime();
 	double lastFrameTime = gameTime;
@@ -66,37 +64,11 @@ int main()
 	return 0;
 }
 
-void Test_Other()
-{
-	AABB c1;
-	c1.LT = glm::vec2(-100.0f, 100.0f);
-	c1.RB = glm::vec2(100.0f, -100.0f);
-
-	bool testResult = Collide2D(0.0, 0.0, c1);
-	testResult = false;
-
-	AABB c2;
-	c2.LT = glm::vec2(-150.0f, 50.0f);
-	c2.RB = glm::vec2(50.0f, -150.0f);
-
-	AABB c3;
-	c1.LT = glm::vec2(-300.0f, -100.0f);
-	c1.RB = glm::vec2(-100.0f, -300.0f);
-
-	testResult = Collide2D(c1, c2);
-	testResult = false;
-	
-	testResult = Collide2D(c1, c3);
-	testResult = false;
-
-	int test = 10;
-}
-
 void InitScene()
 {
 	// Player
 	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pSprite->Init(GetBaseDirectory() + "resource\\strike.jpg");
+	pSprite->Init(GetBaseDirectory() + "resource\\pad.png"); // pad.png
 
 	CPlayer* pPlayer = new CPlayer();
 	AddGameObject(pPlayer);
@@ -146,16 +118,4 @@ void InitScene()
 	pFillCircle->SetColor(glm::vec4(0.2f, 0.5f, 0.1f, 1.0f));
 
 	// CTexture2D 
-	
-	wchar_t* chinese_str = L"·±";
-	CCharTexture* pCharTexture = GetResourceFactory()->Create<CCharTexture>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pCharTexture->Init(chinese_str[0]);
-
-	CTextObject* pText = new CTextObject();
-	AddGameObject(pText);
-	pText->Init();
-	pText->SetScale(32.0f);
-	pText->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
-	pText->SetSprite(pCharTexture);
-	pText->SetPosiiton(-200.0f, -200.0f, 0.0f);
 }

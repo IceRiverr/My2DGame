@@ -18,6 +18,7 @@
 #include "SmartPointer.h"
 #include "GamePlayObject.h"
 #include "Physics2DLib.h"
+#include <sstream>  
 
 CEngine* g_pEngine = nullptr;
 CAttackGameRule	rule;
@@ -42,6 +43,8 @@ int main()
 
 	std::cout << "Attack 10 box monster." << std::endl;
 
+	std::stringstream ss;
+
 	while (!glfwWindowShouldClose(CEngine::GetEngine()->m_gWindow))
 	{
 		if (pPlayer->GetGameRule()->IsWin())
@@ -50,9 +53,20 @@ int main()
 			break;
 		}
 
+		CFontLib::DrawTextAt("Hello, Boy, Good Night! Long long age, a witcher find a evil method to have dead to live...", -350, -250, 16, glm::vec3(0.0f, 1.0f, 0.0f));
+
 		gameTime = glfwGetTime();
 		deltaTime = gameTime - lastFrameTime;
 		lastFrameTime = gameTime;
+
+		float fps = (float)(1.0 / deltaTime);
+		
+		std::stringstream ss;
+		ss.setf(std::ios::fixed, std::ios::floatfield);
+		ss.precision(2);
+		ss << "FPS: " << fps;
+
+		CFontLib::DrawTextAt(ss.str(), -380, 280, 16, glm::vec3(0.0f, 0.0f, 0.0f));
 
 		g_pEngine->ProcessEvent();
 		g_pEngine->Update((float)deltaTime);
@@ -77,8 +91,6 @@ int main()
 	glfwTerminate();
 
 	DELETE_PTR(g_pEngine);
-
-	//getchar();
 
 	return 0;
 }
@@ -116,12 +128,12 @@ void InitScene()
 
 	// Player
 	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pSprite->Init(GetBaseDirectory() + "resource\\strike.jpg");
+	pSprite->Init(GetBaseDirectory() + "resource\\playerShip1_orange.png");//playerShip1_orange.png  strike.jpg
 
 	pPlayer = new CPlayer();
 	AddGameObject(pPlayer);
 	pPlayer->Init();
-	pPlayer->SetScale(32.0f);
+	pPlayer->SetScale(32.0f, 32.0f);
 	pPlayer->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
 	pPlayer->SetSprite(pSprite);
 	pPlayer->SetPosiiton(0.0f, 0.0f, 1.0f);
@@ -139,7 +151,7 @@ void InitScene()
 
 		pBox->Init();
 		pBox->SetPosiiton(x, y, 0.0f);
-		pBox->SetScale(16.0f);
+		pBox->SetScale(16.0f, 16.0f);
 		pBox->SetTarget(pPlayer);
 	}
 
@@ -147,39 +159,27 @@ void InitScene()
 	AddGameObject(pLine);
 	pLine->Init();
 	pLine->SetPosiiton(100.0f, 100.0f, 0.0f);
-	pLine->SetScale(32.0f);
+	pLine->SetScale(32.0f, 32.0f);
 	pLine->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_QUAD_LINE));
 
 	CLineObject* pCircle = new CLineObject();
 	AddGameObject(pCircle);
 	pCircle->Init();
 	pCircle->SetPosiiton(-100.0f, 100.0f, 0.0f);
-	pCircle->SetScale(32.0f);
+	pCircle->SetScale(32.0f, 32.0f);
 	pCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE_LINE));
 
 	CSolidColorObject* pFillCircle = new CSolidColorObject();
 	AddGameObject(pFillCircle);
 	pFillCircle->Init();
 	pFillCircle->SetPosiiton(-100.0f, 0.0f, 0.0f);
-	pFillCircle->SetScale(32.0f);
+	pFillCircle->SetScale(32.0f, 32.0f);
 	pFillCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE));
 	pFillCircle->SetColor(glm::vec4(0.2f, 0.5f, 0.1f, 1.0f));
 
 	// CTexture2D
 	
-	wchar_t* chinese_str = L"·±";
-	CCharTexture* pCharTexture = GetResourceFactory()->Create<CCharTexture>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pCharTexture->Init(chinese_str[0]);
-
-	CCharTexture* pTestCharTex = CEngine::GetEngine()->m_gFontLib->Get_ASCII_Texture('H');
-
-	CTextObject* pText = new CTextObject();
-	AddGameObject(pText);
-	pText->Init();
-	pText->SetScale(32.0f);
-	pText->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
-	pText->SetSprite(pTestCharTex);
-	pText->SetPosiiton(-200.0f, -200.0f, 0.0f);
-
-	CFontLib::DrawTextAt("I have a good night.", 10, 200, 32);
+	//wchar_t* chinese_str = L"·±";
+	//CCharTexture* pCharTexture = GetResourceFactory()->Create<CCharTexture>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	//pCharTexture->Init(chinese_str[0]);
 }
