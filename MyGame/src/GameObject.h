@@ -63,15 +63,13 @@ public:
 	const glm::vec3& GetPosition() const {return m_vPosition;}
 
 protected:
-	
-
-protected:
 	CShape*			m_pShape;
+	glm::mat4		m_mModelMatrix;
 
+private:
 	glm::vec3		m_vPosition;
 	float			m_fRotate;
 	glm::vec2		m_vScale;
-	glm::mat4		m_mModelMatrix;
 
 	bool			m_bMatrixDirty;
 	bool			m_bDestroyFlag;

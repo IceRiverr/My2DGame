@@ -26,6 +26,7 @@
     <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\FontLib.h" />
     <ClInclude Include="..\src\GameObject.h" />
+    <ClInclude Include="..\src\GameWindow.h" />
     <ClInclude Include="..\src\Physics2DLib.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Texture.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="..\src\FileSystem.cpp" />
     <ClCompile Include="..\src\FontLib.cpp" />
     <ClCompile Include="..\src\GameObject.cpp" />
+    <ClCompile Include="..\src\GameWindow.cpp" />
     <ClCompile Include="..\src\glad.c" />
     <ClCompile Include="..\src\Physics2DLib.cpp" />
     <ClCompile Include="..\src\Resource.cpp" />

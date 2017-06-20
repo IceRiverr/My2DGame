@@ -65,6 +65,9 @@ void CFontLib::Draw()
 	if (m_pShape == nullptr || m_pEffect == nullptr)
 		return;
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	m_pShape->Bind();
 	m_pEffect->Bind();
 
@@ -109,6 +112,8 @@ void CFontLib::Draw()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	m_TextInfos.clear();
+
+	glDisable(GL_BLEND);
 }
 
 void CFontLib::DrawTextAt(const std::string& text, float x, float y, float h /*= 32.0f*/, glm::vec3 color /*= glm::vec3(0.0f, 0.0f, 0.0f)*/, float z /*= 0.0f*/)

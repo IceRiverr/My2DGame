@@ -16,9 +16,10 @@
 #include "Shape.h"
 #include "GameObject.h"
 #include "SmartPointer.h"
-#include "GamePlayObject.h"
 #include "Physics2DLib.h"
 #include <sstream>  
+#include "TG_Sprites.h"
+#include "GameWindow.h"
 
 CEngine* g_pEngine = nullptr;
 CAttackGameRule	rule;
@@ -30,8 +31,14 @@ void InitScene();
 
 int main()
 {
+	CGameWindow* pMainWnd = new CGameWindow("Test Game", 800, 600);
+	pMainWnd->Init();
+
 	g_pEngine = new CEngine();
-	g_pEngine->Init();
+	g_pEngine->Init(pMainWnd);
+
+	CCamera* pCamera = new CCamera(-GetMainWindow()->m_nWidth / 2.0f, GetMainWindow()->m_nWidth / 2.0f, -GetMainWindow()->m_nHeight / 2.0f, GetMainWindow()->m_nHeight / 2.0f);
+	g_pEngine->SetMainCamera(pCamera);
 
 	InitScene();
 
@@ -42,10 +49,8 @@ int main()
 	double deltaTime = 0.0;
 
 	std::cout << "Attack 10 box monster." << std::endl;
-
-	std::stringstream ss;
-
-	while (!glfwWindowShouldClose(CEngine::GetEngine()->m_gWindow))
+	
+	while (!glfwWindowShouldClose(GetMainWindow()->m_WndHnd))
 	{
 		if (pPlayer->GetGameRule()->IsWin())
 		{
@@ -74,18 +79,13 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		g_pEngine->Draw();
 
-		CEngine::GetEngine()->m_gFontLib->Draw();
-
 		glfwPollEvents();
-		glfwSwapBuffers(CEngine::GetEngine()->m_gWindow);
+		glfwSwapBuffers(GetMainWindow()->m_WndHnd);
 	}
 
 	glfwTerminate();

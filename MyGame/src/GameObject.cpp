@@ -181,12 +181,17 @@ void CSpriteObject::Draw()
 	if (m_pShape == nullptr || m_pEffect == nullptr || m_pSprite == nullptr)
 		return;
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	m_pShape->Bind();
 	m_pSprite->Bind();
 	m_pEffect->Bind();
 	m_pEffect->BindParameters(m_mModelMatrix);
 
 	glDrawElements(GL_TRIANGLES, m_pShape->GetMeshData()->m_nNumIndex, GL_UNSIGNED_INT, 0);
+
+	glDisable(GL_BLEND);
 }
 
 void CSpriteObject::ProcessInput(GLFWwindow* window)

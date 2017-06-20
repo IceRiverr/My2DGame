@@ -55,6 +55,9 @@
     <ClInclude Include="..\src\FontLib.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\GameWindow.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SolidColorPS.glsl">
@@ -108,6 +111,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\FontLib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GameWindow.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

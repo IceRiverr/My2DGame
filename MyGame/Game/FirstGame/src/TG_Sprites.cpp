@@ -1,7 +1,7 @@
 
-#include "GamePlayObject.h"
 #include <iostream>
 #include "FontLib.h"
+#include "TG_Sprites.h"
 
 CPlayer::CPlayer()
 {
@@ -22,29 +22,31 @@ void CPlayer::Update(float dt)
 void CPlayer::Draw()
 {
 	CSpriteObject::Draw();
-	CFontLib::DrawTextAt(m_Name, m_vPosition.x - 16.0f, m_vPosition.y + 36.0f, 16.0f, glm::vec3(1.0f, 0.0f, 1.0f));
+	CFontLib::DrawTextAt(m_Name,GetPosition().x - 16.0f, GetPosition().y + 36.0f, 16.0f, glm::vec3(1.0f, 0.0f, 1.0f));
 }
 
 void CPlayer::ProcessInput(GLFWwindow* window)
 {
+	glm::vec3 pos = GetPosition();
+
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		m_vPosition.x += 1.0f;
+		pos.x += 1.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		m_vPosition.x -= 1.0f;
+		pos.x -= 1.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		m_vPosition.y += 1.0f;
+		pos.y += 1.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		m_vPosition.y -= 1.0f;
+		pos.y -= 1.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		m_bActive = true;
 	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
 		m_bActive = false;
 	
-	m_bMatrixDirty = true;
+	SetPosiiton(pos);
 }
 
 void CPlayer::SetGameRule(CAttackGameRule* rule)
@@ -75,7 +77,9 @@ void CBoxEnemy::Update(float dt)
 {
 	if (m_pTarget)
 	{
-		glm::vec3 dir = m_pTarget->GetPosition() - GetPosition();
+		glm::vec3 pos = GetPosition();
+
+		glm::vec3 dir = m_pTarget->GetPosition() - pos;
 		dir.z = 0.0f;
 		float length = glm::length(dir);
 
@@ -101,8 +105,8 @@ void CBoxEnemy::Update(float dt)
 			m_vMoveDir *= m_fMaxMoveSpeed;
 		}
 
-		m_vPosition += m_vMoveDir * dt;
-		SetPosiiton(m_vPosition);
+		pos += m_vMoveDir * dt;
+		SetPosiiton(pos);
 
 		float red = 0.0f;
 		if (length < fAttackArange)

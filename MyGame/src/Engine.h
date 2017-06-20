@@ -4,35 +4,38 @@
 #include "FileSystem.h"
 #include "GameObject.h"
 #include "FontLib.h"
+#include "GameWindow.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+class CGameWindow;
 
-const std::string& GetBaseDirectory();
-CResourceFactory* GetResourceFactory();
-void AddGameObject(IGameObject* pObj);
+const std::string&	GetBaseDirectory();
+CResourceFactory*	GetResourceFactory();
+const CCamera*		GetSceneCamera();
+const CGameWindow*	GetMainWindow();
+void				AddGameObject(IGameObject* pObj);
 
 class CEngine
 {
-	friend const std::string& GetBaseDirectory();
-	friend CResourceFactory* GetResourceFactory();
-	friend void AddGameObject(IGameObject* pObj);
+	friend const std::string&	GetBaseDirectory();
+	friend CResourceFactory*	GetResourceFactory();
+	friend const CCamera*		GetSceneCamera();
+	friend const CGameWindow*	GetMainWindow();
+	friend void					AddGameObject(IGameObject* pObj);
 public:
 	CEngine();
 	~CEngine();
 
-	int Init();
+	int Init(CGameWindow* win);
 	void Update(float dt);
 	void Draw();
 	void Resize(int width, int height);
 	void ProcessEvent();
 
 	static CEngine* GetEngine() { return m_sEngine; };
+	void SetMainCamera(CCamera* camera);
 
 public:
-	int					m_gScreenWidth;
-	int					m_gScreenHeight;
-	GLFWwindow*			m_gWindow;
-	CCamera*			m_gCamera;
+	CGameWindow*		m_gMainWindow;
 	CFontLib*			m_gFontLib;
 
 private:
@@ -41,4 +44,5 @@ private:
 	CResourceFactory*	m_gResourceFactory;
 	CSceneManager*		m_gSceneMgr;
 	CFileSystem*		m_gFileSys;
+	CCamera*			m_gMainCamera;
 };

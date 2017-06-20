@@ -16,8 +16,10 @@
 #include "Shape.h"
 #include "GameObject.h"
 #include "SmartPointer.h"
-#include "GamePlayObject.h"
 #include "Physics2DLib.h"
+#include "BB_Sprites.h"
+#include "GameWindow.h"
+#include <sstream>
 
 CEngine* g_pEngine = nullptr;
 
@@ -27,8 +29,14 @@ void InitScene();
 
 int main()
 {
+	CGameWindow* pMainWnd = new CGameWindow("Break Brick", 800, 600);
+	pMainWnd->Init();
+
 	g_pEngine = new CEngine();
-	g_pEngine->Init();
+	g_pEngine->Init(pMainWnd);
+
+	CCamera* pCamera = new CCamera(-GetMainWindow()->m_nWidth / 2.0f, GetMainWindow()->m_nWidth / 2.0f, 0.0f, GetMainWindow()->m_nHeight * 1.0f);
+	g_pEngine->SetMainCamera(pCamera);
 
 	InitScene();
 	
@@ -36,7 +44,7 @@ int main()
 	double lastFrameTime = gameTime;
 	double deltaTime = 0.0;
 
-	while (!glfwWindowShouldClose(CEngine::GetEngine()->m_gWindow))
+	while (!glfwWindowShouldClose(GetMainWindow()->m_WndHnd))
 	{
 		gameTime = glfwGetTime();
 		deltaTime = gameTime - lastFrameTime;
@@ -44,6 +52,14 @@ int main()
 
 		g_pEngine->ProcessEvent();
 		g_pEngine->Update((float)deltaTime);
+
+		float fps = (float)(1.0 / deltaTime);
+
+		std::stringstream ss;
+		ss.setf(std::ios::fixed, std::ios::floatfield);
+		ss.precision(2);
+		ss << "FPS: " << fps;
+		CFontLib::DrawTextAt(ss.str(), -GetMainWindow()->m_nWidth / 2.0f + 2.0f, GetMainWindow()->m_nHeight -18.0f, 16, glm::vec3(1.0f, 0.0f, 0.0f));
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -54,7 +70,7 @@ int main()
 		g_pEngine->Draw();
 
 		glfwPollEvents();
-		glfwSwapBuffers(CEngine::GetEngine()->m_gWindow);
+		glfwSwapBuffers(GetMainWindow()->m_WndHnd);
 	}
 
 	glfwTerminate();
@@ -68,32 +84,16 @@ void InitScene()
 {
 	// Player
 	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pSprite->Init(GetBaseDirectory() + "resource\\pad.png"); // pad.png
+	pSprite->Init(GetBaseDirectory() + "resource\\buttonLong_brown_pressed.png"); // pad.png
 
-	CPlayer* pPlayer = new CPlayer();
-	AddGameObject(pPlayer);
-	pPlayer->Init();
-	pPlayer->SetScale(32.0f);
-	pPlayer->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_SPRITE));
-	pPlayer->SetSprite(pSprite);
-	pPlayer->SetPosiiton(0.0f, 0.0f, 1.0f);
-
-	int nNumEnemies = 10;
-	std::default_random_engine random_e;
-	std::uniform_real_distribution<double> random(-1.0, 1.0);
-	for (int i = 0; i < nNumEnemies; ++i)
-	{
-		CBoxEnemy* pBox = new CBoxEnemy();
-		AddGameObject(pBox);
-
-		float x = (float)random(random_e) * 400.0f;
-		float y = (float)random(random_e) * 300.0f;
-
-		pBox->Init();
-		pBox->SetPosiiton(x, y, 0.0f);
-		pBox->SetScale(16.0f);
-		pBox->SetTarget(pPlayer);
-	}
+	CBallRacket* pRacket = new CBallRacket();
+	AddGameObject(pRacket);
+	pRacket->Init();
+	pRacket->SetScale(64.0f, 16.0f);
+	pRacket->SetBoundingBox(64.0f, 16.0f);
+	pRacket->SetSprite(pSprite);
+	pRacket->SetHeight(32.0f);
+	pRacket->SetMoveSpeed(500.0f);
 
 	CLineObject* pLine = new CLineObject();
 	AddGameObject(pLine);
@@ -112,7 +112,7 @@ void InitScene()
 	CSolidColorObject* pFillCircle = new CSolidColorObject();
 	AddGameObject(pFillCircle);
 	pFillCircle->Init();
-	pFillCircle->SetPosiiton(-100.0f, 0.0f, 0.0f);
+	pFillCircle->SetPosiiton(-100.0f, 200.0f, 0.0f);
 	pFillCircle->SetScale(32.0f);
 	pFillCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE));
 	pFillCircle->SetColor(glm::vec4(0.2f, 0.5f, 0.1f, 1.0f));

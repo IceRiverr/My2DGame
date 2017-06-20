@@ -144,8 +144,8 @@ void CSpriteEffect::Init()
 void CSpriteEffect::BindParameters(const glm::mat4 & model)
 {
 	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
-	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
+	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mViewMat));
+	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mProjectionMat));
 	
 	glUniform1i(m_SpriteTexLocation, 0);
 }
@@ -174,8 +174,8 @@ void CSolidColorEffect::Init()
 void CSolidColorEffect::BindParameters(const glm::mat4 & model, glm::vec4 vertexColor)
 {
 	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
-	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
+	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mViewMat));
+	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mProjectionMat));
 	glUniform4f(m_VertexColorLocation, vertexColor.r, vertexColor.g, vertexColor.b,vertexColor.a);
 }
 
@@ -208,8 +208,8 @@ void CFontEffect::Init()
 void CFontEffect::BindParameters(const glm::mat4& model, glm::vec3 fontColor)
 {
 	glUniformMatrix4fv(m_ModelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mViewMat));
-	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(CEngine::GetEngine()->m_gCamera->m_mProjectionMat));
+	glUniformMatrix4fv(m_ViewMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mViewMat));
+	glUniformMatrix4fv(m_ProjectMatLocation, 1, GL_FALSE, glm::value_ptr(GetSceneCamera()->m_mProjectionMat));
 
 	glUniform1i(m_CharacterTexLocation, 0);
 	glUniform3f(m_FontColorLocation, fontColor.r, fontColor.g, fontColor.b);

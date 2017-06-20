@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GamePlayObject.cpp">
+    <ClCompile Include="src\BreakBrick.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\BreakBrick.cpp">
+    <ClCompile Include="src\BB_Sprites.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\GamePlayObject.h">
+    <ClInclude Include="src\BB_Sprites.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

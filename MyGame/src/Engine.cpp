@@ -6,55 +6,32 @@ CEngine* CEngine::m_sEngine = nullptr;
 CEngine::CEngine()
 {
 	m_sEngine = this;
-
-	m_gWindow = nullptr;
+	
 	m_gResourceFactory = nullptr;
 	m_gSceneMgr = nullptr;
 	m_gFileSys = nullptr;
-	m_gCamera = nullptr;
+	m_gMainCamera = nullptr;
 	m_gFontLib = nullptr;
 
-	m_gScreenWidth = 800;
-	m_gScreenHeight = 600;
+	m_gMainWindow = nullptr;
 }
 
 CEngine::~CEngine()
 {
 	DELETE_PTR(m_gFileSys);
-	DELETE_PTR(m_gCamera);
+	DELETE_PTR(m_gMainCamera);
 	
 	DELETE_PTR(m_gSceneMgr);
 	DELETE_PTR(m_gResourceFactory);
 
 	DELETE_PTR(m_gFontLib);
-
-	glfwDestroyWindow(m_gWindow);
-	m_gWindow = nullptr;
+	DELETE_PTR(m_gMainWindow);
 }
 
-int CEngine::Init()
+int CEngine::Init(CGameWindow* win)
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	m_gWindow = glfwCreateWindow(m_gScreenWidth, m_gScreenHeight, "Attack", nullptr, nullptr);
-	if (m_gWindow == nullptr)
-	{
-		std::cout << "ERROR: Failed to create GLFW window." << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(m_gWindow);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "ERROR: Failed to initialize GLAD." << std::endl;
-		return -1;
-	}
-
-	glfwSetFramebufferSizeCallback(m_gWindow, framebuffer_size_callback);
+	DELETE_PTR(m_gMainWindow);
+	m_gMainWindow = win;
 
 	m_gResourceFactory = new CResourceFactory();
 
@@ -65,7 +42,7 @@ int CEngine::Init()
 
 	CBuildInResource::Regsiter();
 
-	m_gCamera = new CCamera(800, 600);
+	m_gMainCamera = new CCamera(0.0f, (float)m_gMainWindow->m_nWidth, 0.0f, (float)m_gMainWindow->m_nHeight);
 
 	m_gFontLib = new CFontLib();
 	m_gFontLib->Init();
@@ -75,31 +52,35 @@ int CEngine::Init()
 
 void CEngine::Update(float dt)
 {
-	m_gCamera->Update(dt);
+	m_gMainCamera->Update(dt);
 	m_gSceneMgr->Update(dt);
 }
 
 void CEngine::Draw()
 {
+	
+
 	m_gSceneMgr->Draw();
+	m_gFontLib->Draw();
 }
 
 void CEngine::Resize(int width, int height)
 {
-	glViewport(0, 0, m_gScreenWidth, m_gScreenHeight);
+	glViewport(0, 0, m_gMainWindow->m_nWidth, m_gMainWindow->m_nHeight);
 }
 
 void CEngine::ProcessEvent()
 {
-	if (glfwGetKey(m_gWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(m_gWindow, true);
+	if (glfwGetKey(m_gMainWindow->m_WndHnd, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(m_gMainWindow->m_WndHnd, true);
 
-	m_gSceneMgr->ProcessEvent(m_gWindow);
+	m_gSceneMgr->ProcessEvent(m_gMainWindow->m_WndHnd);
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void CEngine::SetMainCamera(CCamera* camera)
 {
-	CEngine::GetEngine()->Resize(width, height);
+	DELETE_PTR(m_gMainCamera);
+	m_gMainCamera = camera;
 }
 
 const std::string& GetBaseDirectory()
@@ -115,4 +96,14 @@ CResourceFactory * GetResourceFactory()
 void AddGameObject(IGameObject * pObj)
 {
 	CEngine::GetEngine()->m_gSceneMgr->AddGameObject(pObj);
+}
+
+const CCamera* GetSceneCamera()
+{
+	return CEngine::GetEngine()->m_gMainCamera;
+}
+
+const CGameWindow* GetMainWindow()
+{
+	return CEngine::GetEngine()->m_gMainWindow;
 }
