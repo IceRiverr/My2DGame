@@ -24,6 +24,7 @@ int CGameWindow::Init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	
 
 	m_WndHnd = glfwCreateWindow(m_nWidth, m_nHeight, m_Title.c_str(), nullptr, nullptr);
 	if (m_WndHnd == nullptr)
@@ -33,6 +34,12 @@ int CGameWindow::Init()
 		return -1;
 	}
 	glfwMakeContextCurrent(m_WndHnd);
+
+	// 检测到最新输入状态，并立即更新, 防止了一些即时状态的丢失
+	glfwSetInputMode(m_WndHnd, GLFW_STICKY_KEYS, 1);
+
+	// glfwSwapBuffers操作之间，屏幕需要等待更新的次数  V-sync
+	glfwSwapInterval(0);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{

@@ -1,8 +1,23 @@
 
 #pragma once
 #include "GameObject.h"
+#include "Physics2DLib.h"
 
-class CBallRacket : public CSpriteObject
+bool ClacLineCrossBBox(const glm::vec2& start, const glm::vec2& end, const glm::vec2& dir, const BBox& bb, glm::vec2& newP, glm::vec2& newDir);
+
+class ICollider
+{
+public:
+	virtual const BBox& GetBBox() = 0;
+};
+
+class CScene
+{
+public:
+	std::vector<ICollider*> m_Colliders;
+};
+
+class CBallRacket : public CSpriteObject, public ICollider
 {
 public:
 	CBallRacket();
@@ -20,28 +35,49 @@ public:
 	void Draw();
 	void ProcessInput(GLFWwindow* window);
 
-	void SetBoundingBox(float w, float h);
-	const glm::vec2& GetBoundingBox() const;
+	void SetBBoxSize(float w, float h);
+	const BBox& GetBBox();
 	void SetHeight(float h);
 	void SetMoveSpeed(float speed);
 
 private:
-	glm::vec2		m_BoundingBox;
+	BBox			m_BBox;
 	float			m_fMoveSpeed;
 	float			m_fHeight;
 	MOVE_DIR		m_MoveDir;
 };
 
-class CBrick : public CSpriteObject
+class CBall : public CSpriteObject
+{
+public: 
+	CBall();
+	~CBall();
+
+	void Init();
+	void Update(float dt);
+	void Draw();
+
+	void SetSceneRef(CScene* c);
+private:
+	CScene*			m_pScene;	// dirty code
+	float			m_fRadius;
+	glm::vec2		m_Dir;
+	float			m_fMoveSpeed;
+};
+
+class CBrick : public CSpriteObject, public ICollider
 {
 public:
 	CBrick();
 	~CBrick();
 
+	void Init();
 	void Update(float dt);
 	void Draw();
-	
-private:
-	glm::vec2	m_Size;
 
+	const BBox& GetBBox();
+	void SetBBoxSize(float w, float h);
+
+private:
+	BBox			m_BBox;
 };

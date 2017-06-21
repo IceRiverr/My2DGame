@@ -23,6 +23,8 @@
 
 CEngine* g_pEngine = nullptr;
 
+CScene* g_pScene = nullptr;
+
 void Test_Other();
 
 void InitScene();
@@ -35,8 +37,12 @@ int main()
 	g_pEngine = new CEngine();
 	g_pEngine->Init(pMainWnd);
 
-	CCamera* pCamera = new CCamera(-GetMainWindow()->m_nWidth / 2.0f, GetMainWindow()->m_nWidth / 2.0f, 0.0f, GetMainWindow()->m_nHeight * 1.0f);
+	CCamera* pCamera = new CCamera(0.0f, (float)GetMainWindow()->m_nWidth, 0.0f, (float)GetMainWindow()->m_nHeight * 1.0f);
 	g_pEngine->SetMainCamera(pCamera);
+
+	g_pScene = new CScene();
+
+	Test_Other();
 
 	InitScene();
 	
@@ -59,7 +65,7 @@ int main()
 		ss.setf(std::ios::fixed, std::ios::floatfield);
 		ss.precision(2);
 		ss << "FPS: " << fps;
-		CFontLib::DrawTextAt(ss.str(), -GetMainWindow()->m_nWidth / 2.0f + 2.0f, GetMainWindow()->m_nHeight -18.0f, 16, glm::vec3(1.0f, 0.0f, 0.0f));
+		CFontLib::DrawTextAt(ss.str(), 2.0f, GetMainWindow()->m_nHeight -18.0f, 16, glm::vec3(1.0f, 0.0f, 0.0f));
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -84,38 +90,82 @@ void InitScene()
 {
 	// Player
 	CTexture2D* pSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
-	pSprite->Init(GetBaseDirectory() + "resource\\buttonLong_brown_pressed.png"); // pad.png
+	pSprite->Init(GetBaseDirectory() + "resource\\buttonLong_brown_pressed.png");
+
+	CTexture2D* pBallSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	pBallSprite->Init(GetBaseDirectory() + "resource\\dotRed.png");
+
+	CTexture2D* pBrickSprite = GetResourceFactory()->Create<CTexture2D>(RESOURCE_TYPE::RESOURCE_TEXTURE);
+	pBrickSprite->Init(GetBaseDirectory() + "resource\\elementMetal051.png");
 
 	CBallRacket* pRacket = new CBallRacket();
 	AddGameObject(pRacket);
 	pRacket->Init();
 	pRacket->SetScale(64.0f, 16.0f);
-	pRacket->SetBoundingBox(64.0f, 16.0f);
+	pRacket->SetBBoxSize(128.0f, 32.0f);
 	pRacket->SetSprite(pSprite);
-	pRacket->SetHeight(32.0f);
+	pRacket->SetPosiiton(400.0f, 0.0f, 0.0f);
+	pRacket->SetHeight(50.0f);
 	pRacket->SetMoveSpeed(500.0f);
+	g_pScene->m_Colliders.push_back(pRacket);
 
 	CLineObject* pLine = new CLineObject();
 	AddGameObject(pLine);
 	pLine->Init();
-	pLine->SetPosiiton(100.0f, 100.0f, 0.0f);
+	pLine->SetPosiiton(750.0f, 550.0f, 0.0f);
 	pLine->SetScale(32.0f);
 	pLine->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_QUAD_LINE));
 
-	CLineObject* pCircle = new CLineObject();
-	AddGameObject(pCircle);
-	pCircle->Init();
-	pCircle->SetPosiiton(-100.0f, 100.0f, 0.0f);
-	pCircle->SetScale(32.0f);
-	pCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE_LINE));
+	CBall* pBall = new CBall();
+	AddGameObject(pBall);
+	pBall->Init();
+	pBall->SetPosiiton(glm::vec3(400.0f, 50.0f, 0.0f));
+	pBall->SetScale(10.0f, 10.0f);
+	pBall->SetSceneRef(g_pScene);
+	pBall->SetSprite(pBallSprite);
 
-	CSolidColorObject* pFillCircle = new CSolidColorObject();
-	AddGameObject(pFillCircle);
-	pFillCircle->Init();
-	pFillCircle->SetPosiiton(-100.0f, 200.0f, 0.0f);
-	pFillCircle->SetScale(32.0f);
-	pFillCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE));
-	pFillCircle->SetColor(glm::vec4(0.2f, 0.5f, 0.1f, 1.0f));
+	int numBricks = 20;
+	
+	glm::vec3 postions[20] = 
+	{
+		glm::vec3(50.0f, 500.0f, 0.0f),
+		glm::vec3(190, 500.0f, 0.0f),
+		glm::vec3(430.0f, 500.0f, 0.0f),
+		glm::vec3(599.0f, 500.0f, 0.0f),
+		glm::vec3(748.0f, 500.0f, 0.0f),
+		glm::vec3(20.0f, 400.0f, 0.0f),
+		glm::vec3(210.0f, 400.0f, 0.0f),
+		glm::vec3(400.0f, 400.0f, 0.0f),
+		glm::vec3(600.0f, 400.0f, 0.0f),
+		glm::vec3(762.0f, 400.0f, 0.0f),
 
-	// CTexture2D 
+		glm::vec3(50.0f, 300.0f, 0.0f),
+		glm::vec3(170, 300.0f, 0.0f),
+		glm::vec3(430.0f, 300.0f, 0.0f),
+		glm::vec3(569.0f, 300.0f, 0.0f),
+		glm::vec3(718.0f, 300.0f, 0.0f),
+		glm::vec3(20.0f, 200.0f, 0.0f),
+		glm::vec3(240.0f, 200.0f, 0.0f),
+		glm::vec3(410.0f, 200.0f, 0.0f),
+		glm::vec3(6150.0f, 200.0f, 0.0f),
+		glm::vec3(762.0f, 200.0f, 0.0f)
+	};
+
+	for (int i = 0; i < numBricks; ++i)
+	{
+		CBrick* pBrack = new CBrick();
+		AddGameObject(pBrack);
+		pBrack->Init();
+		pBrack->SetScale(48.0f, 16.0f);
+		pBrack->SetBBoxSize(96.0f, 16.0f);
+		pBrack->SetPosiiton(postions[i]);
+		pBrack->SetSprite(pBrickSprite);
+		g_pScene->m_Colliders.push_back(pBrack);
+	}
+}
+
+void Test_Other()
+{
+	
+	int ret = 0;
 }

@@ -43,11 +43,17 @@ http://www.4399.com/flash/63064_1.htm
 实现球拍的移动；
 2017年6月21日01:07:27
 
+2017年6月21日
+线段相交测试
+http://blog.csdn.net/chenbang110/article/details/7742529
 
+线段相交
+http://www.cnblogs.com/dwdxdy/p/3230485.html
 
+实现球的运动和碰撞问题；
 
-
-
+谈谈"求线段交点"的几种算法(js实现,完整版)
+http://www.cnblogs.com/i-gps/archive/2012/06/19/2554992.html
 
 
 
