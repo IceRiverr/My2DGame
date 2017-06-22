@@ -30,16 +30,16 @@ void CPlayer::ProcessInput(GLFWwindow* window)
 	glm::vec3 pos = GetPosition();
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		pos.x += 1.0f;
+		pos.x += 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		pos.x -= 1.0f;
+		pos.x -= 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		pos.y += 1.0f;
+		pos.y += 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		pos.y -= 1.0f;
+		pos.y -= 0.1f;
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		m_bActive = true;

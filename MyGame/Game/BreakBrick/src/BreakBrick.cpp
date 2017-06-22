@@ -101,12 +101,12 @@ void InitScene()
 	CBallRacket* pRacket = new CBallRacket();
 	AddGameObject(pRacket);
 	pRacket->Init();
-	pRacket->SetScale(64.0f, 16.0f);
-	pRacket->SetBBoxSize(128.0f, 32.0f);
+	pRacket->SetScale(128.0f, 16.0f);
+	pRacket->SetBBoxSize(256.0f, 32.0f);
 	pRacket->SetSprite(pSprite);
 	pRacket->SetPosiiton(400.0f, 0.0f, 0.0f);
 	pRacket->SetHeight(50.0f);
-	pRacket->SetMoveSpeed(500.0f);
+	pRacket->SetMoveSpeed(1000.0f);
 	g_pScene->m_Colliders.push_back(pRacket);
 
 	CLineObject* pLine = new CLineObject();

@@ -55,5 +55,10 @@ http://www.cnblogs.com/dwdxdy/p/3230485.html
 谈谈"求线段交点"的几种算法(js实现,完整版)
 http://www.cnblogs.com/i-gps/archive/2012/06/19/2554992.html
 
+2017年6月22日
+添加砖块的消失
+可以通过按下键盘的时间，增加球拍可以叠加给球的速度
+其他功能先不再添加；
+
 
 

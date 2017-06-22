@@ -1,11 +1,16 @@
 #include "BB_Sprites.h"
 #include "Engine.h"
+#include <iostream>
+#include <GLFW\glfw3.h>
+#include <sstream>
 
 CBallRacket::CBallRacket()
 {
-	m_fMoveSpeed = 400.0f;
+	m_fMoveSpeed =500.0f;
 	m_fHeight = 32.0f;
 	m_MoveDir = MOVE_DIR::MOVE_PAUSE;
+	m_fAddSpeed = 0.0f;
+	m_fAdd = 2.0f;
 }
 
 CBallRacket::~CBallRacket()
@@ -25,17 +30,25 @@ void CBallRacket::Update(float dt)
 	
 	if (m_MoveDir == MOVE_DIR::MOVE_LEFT)
 	{
-		pos.x += -m_fMoveSpeed * dt;
+		pos.x -= m_fMoveSpeed * dt;
+		m_fAddSpeed -= m_fAdd * dt;
+		m_fAddSpeed = glm::clamp(m_fAddSpeed, -1.0f, -0.2f);
 	}
 	else if (m_MoveDir == MOVE_DIR::MOVE_RIGHT)
 	{
 		pos.x += m_fMoveSpeed * dt;
+		m_fAddSpeed += m_fAdd * dt;
+		m_fAddSpeed = glm::clamp(m_fAddSpeed, 0.2f, 1.0f);
+	}
+	else if (m_MoveDir == MOVE_DIR::MOVE_PAUSE)
+	{
+		m_fAddSpeed = 0.0f;
 	}
 
-	if (pos.x < m_BBox.size.x)
-		pos.x = m_BBox.size.x;
-	if (pos.x > GetMainWindow()->m_nWidth - m_BBox.size.x)
-		pos.x = GetMainWindow()->m_nWidth - m_BBox.size.x;
+	if (pos.x < m_BBox.size.x / 2.0f)
+		pos.x = m_BBox.size.x / 2.0f;
+	if (pos.x > GetMainWindow()->m_nWidth - m_BBox.size.x / 2.0f)
+		pos.x = GetMainWindow()->m_nWidth - m_BBox.size.x / 2.0f;
 	
 	pos.y = m_fHeight;
 
@@ -49,17 +62,27 @@ void CBallRacket::Update(float dt)
 
 void CBallRacket::Draw()
 {
+	std::stringstream ss;
+	ss << "AddSpeed: " << m_fAddSpeed;
+	CFontLib::DrawTextAt(ss.str(), 2.0f, GetMainWindow()->m_nHeight - 40.0f, 16);
+
 	CSpriteObject::Draw();
 }
 
 void CBallRacket::ProcessInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
 		m_MoveDir = MOVE_DIR::MOVE_RIGHT;
+	}
 	else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
 		m_MoveDir = MOVE_DIR::MOVE_LEFT;
+	}
 	else
+	{
 		m_MoveDir = MOVE_DIR::MOVE_PAUSE;
+	}
 }
 
 void CBallRacket::SetBBoxSize(float w, float h)
@@ -81,6 +104,11 @@ void CBallRacket::SetHeight(float h)
 void CBallRacket::SetMoveSpeed(float speed)
 {
 	m_fMoveSpeed = speed;
+}
+
+float CBallRacket::GetAddSpeed() const
+{
+	return m_fAddSpeed;
 }
 
 CBall::CBall()
@@ -144,7 +172,22 @@ void CBall::Update(float dt)
 			
 			if (ClacLineCrossBBox(lastPos, newPos, m_Dir, bb, afterPos, afterDir))
 			{
-				break;
+				COLLIDER_TYPE type = c->GetColliderType();
+				if (type == COLLIDER_RACKET)
+				{
+					CBallRacket* pRacket = static_cast<CBallRacket*>(c);
+					float xSpeed = pRacket->GetAddSpeed();
+					afterDir.x += xSpeed;
+					afterDir = glm::normalize(afterDir);
+					break;
+				}
+				else if (type == COLLIDER_BRICK)
+				{
+					CBrick* pBrick = static_cast<CBrick*>(c);
+					pBrick->SetDestroyFlag();
+					m_pScene->m_Colliders[i] = nullptr;
+					break;
+				}
 			}
 		}
 	}
