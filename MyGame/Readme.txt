@@ -26,6 +26,6 @@ fmod 声音库
 音频引擎FMOD学习记录
 http://blog.csdn.net/fengyhack/article/details/43318575
 
-
-
+2017年6月22日
+CRefCounter可能有问题，保证对内存的检测，当最终退出时引用计数没有成为0则直接报错，需要这个机制来检测内存的使用情况；
 
