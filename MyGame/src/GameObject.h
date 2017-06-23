@@ -55,7 +55,7 @@ public:
 	void SetShape(CShape* pShape);
 	void SetPosiiton(float x, float y, float z);
 	void SetPosiiton(const glm::vec3& pos);
-	void SetRotate(float angle);
+	void SetRotate(float radian);
 	void SetScale(float sx = 32.0f, float sy = 32.0f);
 	void SetDestroyFlag();
 	bool GetDestroyFlag();

@@ -25,7 +25,7 @@ void InitScene();
 
 CEngine* g_pEngine = nullptr;
 Drawable* pLine1 = nullptr;
-Vehicle* pV = nullptr;
+GameWorld* world = nullptr;
 
 int main()
 {
@@ -37,6 +37,8 @@ int main()
 
 	CCamera* pCamera = new CCamera(0.0f, (float)GetMainWindow()->m_nWidth,0.0f, (float)GetMainWindow()->m_nHeight);
 	g_pEngine->SetMainCamera(pCamera);
+
+	world = new GameWorld();
 
 	InitScene();
 
@@ -70,7 +72,7 @@ int main()
 		g_pEngine->ProcessEvent();
 		g_pEngine->Update((float)deltaTime);
 		// Test update
-		pV->Update((float)deltaTime);
+		world->Update((float)deltaTime);
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -80,7 +82,7 @@ int main()
 
 		g_pEngine->Draw();
 		// Test Draw
-		pV->Draw();
+		world->Draw();
 
 		glfwPollEvents();
 		glfwSwapBuffers(GetMainWindow()->m_WndHnd);
@@ -132,7 +134,15 @@ void InitScene()
 	pCircle->SetScale(20.0f, 20.0f);
 	pCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE_LINE));
 
-	pV = new Vehicle();
+	Vehicle* pV = new Vehicle();
 	pV->Init(pShape);
 	pV->SetPosition(400.0f, 300.0f);
+	world->AddEntity(pV);
+
+	Vehicle* pV1 = new Vehicle();
+	pV1->Init(pShape);
+	pV1->SetPosition(500.0f, 10.0f);
+	world->AddEntity(pV1);
+
+
 }

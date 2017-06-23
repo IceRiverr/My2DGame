@@ -95,7 +95,7 @@ void CBaseObject::Update(float dt)
 	{
 		m_mModelMatrix = glm::mat4();
 		m_mModelMatrix = glm::translate(m_mModelMatrix, m_vPosition);
-		m_mModelMatrix = glm::rotate(m_mModelMatrix, glm::radians(m_fRotate), glm::vec3(0.0f, 0.0f, 1.0f));
+		m_mModelMatrix = glm::rotate(m_mModelMatrix, m_fRotate, glm::vec3(0.0f, 0.0f, 1.0f));
 		m_mModelMatrix = glm::scale(m_mModelMatrix, glm::vec3(m_vScale.x, m_vScale.y, 1.0f));
 		m_bMatrixDirty = false;
 	}
@@ -130,9 +130,9 @@ void CBaseObject::SetPosiiton(const glm::vec3& pos)
 	m_bMatrixDirty = true;
 }
 
-void CBaseObject::SetRotate(float angle)
+void CBaseObject::SetRotate(float radian)
 {
-	m_fRotate = angle;
+	m_fRotate = radian;
 	m_bMatrixDirty = true;
 }
 
