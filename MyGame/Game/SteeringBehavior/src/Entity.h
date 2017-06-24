@@ -31,10 +31,25 @@ class SteeringBehaviors
 public:
 	enum DECELERATION { SLOW = 3, NORMAL = 2, FAST = 1, };
 
+	enum BEHAVIOR_TYPE
+	{
+		NONE			= 0x00000,
+		SEEK			= 0x00001,
+		FLEE			= 0x00002,
+		ARRIVE			= 0x00004,
+		PURSUIT			= 0x00008,
+		EVADE			= 0x00010,
+	};
+
 	SteeringBehaviors(Vehicle* v);
 	~SteeringBehaviors();
 
-	glm::vec2 Calculate();
+	glm::vec2 Calculate(float dt);
+
+	glm::vec2 CalculateWeightedSum(float dt);
+
+	void OnBehavior(BEHAVIOR_TYPE type);
+	void OffBehavior(BEHAVIOR_TYPE type);
 
 	glm::vec2 Seek(glm::vec2 TargetPos);
 
@@ -44,11 +59,25 @@ public:
 
 	glm::vec2 Pursuit(const Vehicle* evader);
 
+	glm::vec2 Evade(const Vehicle* pursuer);
+
+	glm::vec2 Wander(float dt);
+
 private:
 	Vehicle*			m_pVehicle;
+	int					m_BehaviorFlag;
+	glm::vec2			m_vSteeringForce;
 
 	float				m_fSeekWeight;
 	float				m_fFleeWeight;
+	float				m_fWanderWeight;
+
+	// Wander
+	float				m_fWanderRadius;
+	float				m_fWanderDistance;
+	float				m_fWanderJitter;
+	glm::vec2			m_vWanderTarget;
+	
 };
 
 class BaseGameEntity
@@ -95,9 +124,11 @@ public:
 	Vehicle();
 	~Vehicle();
 
-	void Init(CShape* shape);
+	void Start(CShape* shape);
 	void Update(float dt);
 	void Draw();
+
+	const glm::mat4& GetTransformMatrix() const;
 
 protected:
 	GameWorld*			m_pWorld;
@@ -108,15 +139,3 @@ protected:
 };
 
 float TurnaroundTime(const Vehicle* v, glm::vec2 TargetPos);
-
-
-
-
-glm::vec2 Truncate(glm::vec2 in, float length);
-float LengthSqr(const glm::vec2 in);
-glm::vec2 Perp(glm::vec2 in);
-float Vec2ToRadian(glm::vec2 in);
-
-
-void DebugValue(std::string msg, glm::vec2 v);
-void DebugValue(std::string msg, float v);

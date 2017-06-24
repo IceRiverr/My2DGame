@@ -21,12 +21,15 @@
   <ItemGroup>
     <ClInclude Include="..\include\stb_image.h" />
     <ClInclude Include="..\src\Camera.h" />
+    <ClInclude Include="..\src\DebugLib.h" />
     <ClInclude Include="..\src\Effect.h" />
     <ClInclude Include="..\src\Engine.h" />
     <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\FontLib.h" />
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\GameWindow.h" />
+    <ClInclude Include="..\src\GUILib.h" />
+    <ClInclude Include="..\src\MathLib.h" />
     <ClInclude Include="..\src\Physics2DLib.h" />
     <ClInclude Include="..\src\Resource.h" />
     <ClInclude Include="..\src\Texture.h" />
@@ -43,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />
+    <ClCompile Include="..\src\DebugLib.cpp" />
     <ClCompile Include="..\src\Effect.cpp" />
     <ClCompile Include="..\src\Engine.cpp" />
     <ClCompile Include="..\src\FileSystem.cpp" />
@@ -50,6 +54,8 @@
     <ClCompile Include="..\src\GameObject.cpp" />
     <ClCompile Include="..\src\GameWindow.cpp" />
     <ClCompile Include="..\src\glad.c" />
+    <ClCompile Include="..\src\GUILib.cpp" />
+    <ClCompile Include="..\src\MathLib.cpp" />
     <ClCompile Include="..\src\Physics2DLib.cpp" />
     <ClCompile Include="..\src\Resource.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />

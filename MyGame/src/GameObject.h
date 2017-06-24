@@ -60,7 +60,8 @@ public:
 	void SetDestroyFlag();
 	bool GetDestroyFlag();
 	
-	const glm::vec3& GetPosition() const {return m_vPosition;}
+	const glm::vec3& GetPosition() const		{return m_vPosition;}
+	const glm::mat4& GetTransformMatrix() const	{ return m_mModelMatrix; }
 
 protected:
 	CShape*			m_pShape;

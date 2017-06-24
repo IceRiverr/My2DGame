@@ -20,6 +20,8 @@
 #include <sstream>  
 #include "Entity.h"
 #include "GameWindow.h"
+#include "MathLib.h"
+#include "DebugLib.h"
 
 void InitScene();
 
@@ -43,7 +45,7 @@ int main()
 	InitScene();
 
 	// Test
-
+	
 
 
 	// Test End
@@ -86,6 +88,8 @@ int main()
 
 		glfwPollEvents();
 		glfwSwapBuffers(GetMainWindow()->m_WndHnd);
+
+		//Sleep(10);
 	}
 
 	glfwTerminate();
@@ -134,15 +138,16 @@ void InitScene()
 	pCircle->SetScale(20.0f, 20.0f);
 	pCircle->SetShape(CBuildInResource::GetResource<CShape>(CBuildInResource::SHAPE_CIRCLE_LINE));
 
-	Vehicle* pV = new Vehicle();
-	pV->Init(pShape);
-	pV->SetPosition(400.0f, 300.0f);
-	world->AddEntity(pV);
+	for (int i = 0; i < 250; ++i)
+	{
+		Vehicle* pV = new Vehicle();
+		pV->Start(pShape);
+		pV->SetPosition(210 + (float)17 * i , 400.0f + (float)13 * i);
+		world->AddEntity(pV);
 
-	Vehicle* pV1 = new Vehicle();
-	pV1->Init(pShape);
-	pV1->SetPosition(500.0f, 10.0f);
-	world->AddEntity(pV1);
-
-
+		Vehicle* pV1 = new Vehicle();
+		pV1->Start(pShape);
+		pV1->SetPosition(500.0f + (float)13 * i, 300.0f + (float)17 * i);
+		world->AddEntity(pV1);
+	}
 }

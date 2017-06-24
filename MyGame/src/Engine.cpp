@@ -20,11 +20,11 @@ CEngine::~CEngine()
 {
 	DELETE_PTR(m_gFileSys);
 	DELETE_PTR(m_gMainCamera);
+	DELETE_PTR(m_gFontLib);
 	
 	DELETE_PTR(m_gSceneMgr);
 	DELETE_PTR(m_gResourceFactory);
-
-	DELETE_PTR(m_gFontLib);
+	
 	DELETE_PTR(m_gMainWindow);
 }
 

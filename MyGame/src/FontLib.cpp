@@ -18,6 +18,12 @@ CFontLib::~CFontLib()
 {
 	FT_Done_Face(m_FTface);
 	FT_Done_FreeType(m_FTlib);
+
+	for (int i = 0; i < m_ASCII_Table.size(); ++i)
+	{
+		m_ASCII_Table[i] = nullptr;
+	}
+	m_ASCII_Table.clear();
 }
 
 void CFontLib::Init()

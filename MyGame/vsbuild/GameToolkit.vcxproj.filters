@@ -58,6 +58,15 @@
     <ClInclude Include="..\src\GameWindow.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MathLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DebugLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GUILib.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader\SolidColorPS.glsl">
@@ -114,6 +123,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\GameWindow.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MathLib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DebugLib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GUILib.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

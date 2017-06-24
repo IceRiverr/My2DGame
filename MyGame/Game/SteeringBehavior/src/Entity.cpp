@@ -1,8 +1,15 @@
 
 #include "Entity.h"
-#include <iostream>
 #include "FontLib.h"
 #include "Entity.h"
+#include "MathLib.h"
+#include "Engine.h"
+#include <xtgmath.h>
+#include "DebugLib.h"
+
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 BaseGameEntity::BaseGameEntity()
 {
@@ -37,11 +44,12 @@ Vehicle::Vehicle()
 	m_pSteering = nullptr;
 	m_pDraw = nullptr;
 
-	m_vScale = glm::vec2(16.0f, 16.0f);
+	m_vScale = glm::vec2(8.0f, 8.0f);
 	m_fBRadius = 10.0f;
 	//m_fRotation = 1.0f;
 	m_fMass = 1.0f;
-	m_fMaxSpeed = 100.0f;
+	m_fMaxSpeed = 200.0f;
+	m_fMaxForce = 200.0f;
 }
 
 Vehicle::~Vehicle()
@@ -50,7 +58,7 @@ Vehicle::~Vehicle()
 
 }
 
-void Vehicle::Init(CShape* shape)
+void Vehicle::Start(CShape* shape)
 {
 	m_pDraw = new Drawable();
 	m_pDraw->Init();
@@ -58,13 +66,12 @@ void Vehicle::Init(CShape* shape)
 	m_pDraw->SetColor(glm::vec4(1.0f, 0.2f, 0.3f, 1.0f));
 
 	m_pSteering = new SteeringBehaviors(this);
+	
 }
 
 void Vehicle::Update(float dt)
 {
-	glm::vec2 SteeringForce = m_pSteering->Calculate();
-
-	//DebugValue("Force", SteeringForce);
+	glm::vec2 SteeringForce = m_pSteering->Calculate(dt);
 
 	glm::vec2 acceleration = SteeringForce / m_fMass;
 
@@ -74,15 +81,22 @@ void Vehicle::Update(float dt)
 
 	m_vPos += m_vVelocity * dt;
 
+	if (m_vPos.x < 0.0f)
+		m_vPos.x += GetMainWindow()->m_nWidth;
+	if (m_vPos.x > GetMainWindow()->m_nWidth)
+		m_vPos.x -= GetMainWindow()->m_nWidth;
+	if (m_vPos.y < 0.0f)
+		m_vPos.y += GetMainWindow()->m_nHeight;
+	if (m_vPos.y > GetMainWindow()->m_nHeight)
+		m_vPos.y -= GetMainWindow()->m_nHeight;
+
 	if (LengthSqr(m_vVelocity) > 0.0000001f)
 	{
 		m_vHeading = glm::normalize(m_vVelocity);
 		m_vSide = Perp(m_vHeading);
 	}
 
-	m_fRotation = Vec2ToRadian(m_vHeading) - (float)PI * 0.5f;
-
-	// DebugValue("m_fRotation", m_fRotation);
+	m_fRotation = UnitVec2ToRadian(m_vHeading) - (float)PI * 0.5f;
 
 	m_pDraw->SetPosiiton(glm::vec3(m_vPos, 1.0f));
 	m_pDraw->SetScale(m_vScale.x , m_vScale.y);
@@ -95,11 +109,26 @@ void Vehicle::Draw()
 	m_pDraw->Draw();
 }
 
+const glm::mat4& Vehicle::GetTransformMatrix() const
+{
+	return m_pDraw->GetTransformMatrix();
+}
+
 SteeringBehaviors::SteeringBehaviors(Vehicle* v)
 	: m_pVehicle(v)
 {
+	m_BehaviorFlag = 0;
+
 	m_fSeekWeight = 1.0f;
 	m_fFleeWeight = 1.0f;
+	m_fWanderWeight = 1.0f;
+
+	m_fWanderRadius = 50.0f;
+	m_fWanderDistance = 2.0f;
+	m_fWanderJitter = 1000.0f;
+
+	float random = (float)RandomUnit();
+	m_vWanderTarget = glm::vec2(std::cos(random), std::sin(random)) * m_fWanderRadius;
 }
 
 SteeringBehaviors::~SteeringBehaviors()
@@ -107,17 +136,36 @@ SteeringBehaviors::~SteeringBehaviors()
 	m_pVehicle = nullptr;
 }
 
-glm::vec2 SteeringBehaviors::Calculate()
+glm::vec2 SteeringBehaviors::Calculate(float dt)
 {
-	glm::vec2 force;
+	m_vSteeringForce = CalculateWeightedSum(dt);
 
+	return m_vSteeringForce;
+}
+
+glm::vec2 SteeringBehaviors::CalculateWeightedSum(float dt)
+{
 	// force = Seek(glm::vec2(550.0f, 583.0f)) * m_fSeekWeight;
 
-	//force = Flee(glm::vec2(410.0f, 310.0f)) * m_fFleeWeight;
+	// force = Flee(glm::vec2(410.0f, 310.0f)) * m_fFleeWeight;
 
-	force = Arrive(glm::vec2(500.0f, 500.0f), DECELERATION::FAST) * 1.0f;
+	// force = Arrive(glm::vec2(500.0f, 500.0f), DECELERATION::FAST) * 1.0f;
 
-	return force;
+	m_vSteeringForce += Wander(dt) * m_fWanderWeight;
+
+	m_vSteeringForce = Truncate(m_vSteeringForce, m_pVehicle->m_fMaxForce);
+	
+	return m_vSteeringForce;
+}
+
+void SteeringBehaviors::OnBehavior(BEHAVIOR_TYPE type)
+{
+	SetFlag(m_BehaviorFlag, type);
+}
+
+void SteeringBehaviors::OffBehavior(BEHAVIOR_TYPE type)
+{
+	ClearFlag(m_BehaviorFlag, type);
 }
 
 glm::vec2 SteeringBehaviors::Seek(glm::vec2 TargetPos)
@@ -163,9 +211,45 @@ glm::vec2 SteeringBehaviors::Pursuit(const Vehicle* evader)
 		return Seek(evader->m_vPos);
 	}
 
-	float LookAheadTime = ToEvader.length() / (m_pVehicle->m_fMaxSpeed + evader->GetSpeed());
+	float LookAheadTime = glm::length(ToEvader) / (m_pVehicle->m_fMaxSpeed + evader->GetSpeed());
 	LookAheadTime += TurnaroundTime(m_pVehicle, evader->GetPosition());
 	return Seek(evader->m_vPos + evader->m_vVelocity * LookAheadTime);
+}
+
+glm::vec2 SteeringBehaviors::Evade(const Vehicle* pursuer)
+{
+	glm::vec2 ToPursuer = pursuer->GetPosition() - m_pVehicle->GetPosition();
+	
+	float LookAheadTime = glm::length(ToPursuer) / (m_pVehicle->m_fMaxSpeed + pursuer->GetSpeed());
+
+	return Flee(pursuer->GetPosition() + pursuer->m_vVelocity * LookAheadTime);
+}
+
+glm::vec2 SteeringBehaviors::Wander(float dt)
+{
+	float JitterThisTimeSlice = m_fWanderJitter * dt;
+
+	float r1 = (float)RandomUniform();
+	float r2 = (float)RandomUniform();
+
+	glm::vec2 jitterValue = glm::vec2(r1 * JitterThisTimeSlice, r2 * JitterThisTimeSlice);
+
+	m_vWanderTarget += jitterValue;
+
+	m_vWanderTarget = glm::normalize(m_vWanderTarget);
+
+	m_vWanderTarget *= m_fWanderRadius;
+
+	glm::vec2 target = m_vWanderTarget + glm::vec2(0.0f, m_fWanderDistance);
+
+	glm::mat4 trans;
+	trans = glm::translate(trans, glm::vec3(m_pVehicle->m_vPos, 1.0f));
+	trans = glm::rotate(trans, m_pVehicle->m_fRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	target = trans * glm::vec4(target, 0.0f, 1.0f);
+
+	glm::vec2 force = target - m_pVehicle->GetPosition();
+
+	return force;
 }
 
 float TurnaroundTime(const Vehicle* v, glm::vec2 TargetPos)
@@ -177,55 +261,6 @@ float TurnaroundTime(const Vehicle* v, glm::vec2 TargetPos)
 	const float coefficient = 0.5f;
 
 	return (dot - 1.0f) * (-coefficient);
-}
-
-glm::vec2 Truncate(glm::vec2 in, float length)
-{
-	float inLen = glm::length(in);
-	if (inLen <= length)
-		return in;
-	else
-	{
-		return in / inLen * length;
-	}
-}
-
-float LengthSqr(const glm::vec2 in)
-{
-	return in.x * in.x + in.y * in.y;
-}
-
-glm::vec2 Perp(glm::vec2 in)
-{
-	glm::vec3 sideDir = glm::cross(glm::vec3(in, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::vec2 perp = glm::vec2(sideDir.x, sideDir.y);
-	perp = glm::normalize(perp);
-	return perp;
-}
-
-float Vec2ToRadian(glm::vec2 in)
-{
-	in = glm::normalize(in);
-	float radian = 0.0f;
-	if (in.y >= 0.0f)
-	{
-		radian = std::acos(in.x);
-	}
-	else
-	{
-		radian = (float)PI_2 - std::acos(in.x);
-	}
-	return radian;
-}
-
-void DebugValue(std::string msg, glm::vec2 v)
-{
-	std::cout << msg << "\t" << v.x << "\t\t" << v.y << std::endl;
-}
-
-void DebugValue(std::string msg, float v)
-{
-	std::cout << msg << "\t" << v << std::endl;
 }
 
 void GameWorld::Update(float dt)
