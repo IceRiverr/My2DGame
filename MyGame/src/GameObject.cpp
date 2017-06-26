@@ -72,7 +72,7 @@ CBaseObject::CBaseObject()
 	: m_pShape(nullptr)
 	, m_vPosition(0.0f, 0.0f, 0.0f)
 	, m_fRotate(0.0f)
-	, m_vScale(32.0f, 32.0f)
+	, m_vScale(1.0f, 1.0f)
 	, m_bMatrixDirty(true)
 	, m_bDestroyFlag(false)
 {

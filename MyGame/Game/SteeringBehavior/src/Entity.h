@@ -21,9 +21,15 @@ public:
 	void Draw();
 
 	void AddEntity(Vehicle* v);
+	void AddObstacle(BaseGameEntity* o);
+
+	void TagObstaclesWithinViewRange(BaseGameEntity* pVehicle, float range);
+
+	const std::vector<BaseGameEntity*>& GetObstacles() const { return m_Obstacles; }
 
 private:
-	std::vector<Vehicle*> m_Vehicles;
+	std::vector<Vehicle*>			m_Vehicles;
+	std::vector<BaseGameEntity*>	m_Obstacles;
 };
 
 class SteeringBehaviors
@@ -33,12 +39,14 @@ public:
 
 	enum BEHAVIOR_TYPE
 	{
-		NONE			= 0x00000,
-		SEEK			= 0x00001,
-		FLEE			= 0x00002,
-		ARRIVE			= 0x00004,
-		PURSUIT			= 0x00008,
-		EVADE			= 0x00010,
+		NONE				= 0x00000,
+		SEEK				= 0x00001,
+		FLEE				= 0x00002,
+		ARRIVE				= 0x00004,
+		PURSUIT				= 0x00008,
+		EVADE				= 0x00010,
+		WANDER				= 0x00020,
+		OBSTACLE_AVOIDANCE	= 0x00040,
 	};
 
 	SteeringBehaviors(Vehicle* v);
@@ -50,6 +58,7 @@ public:
 
 	void OnBehavior(BEHAVIOR_TYPE type);
 	void OffBehavior(BEHAVIOR_TYPE type);
+	bool TestBehavior(BEHAVIOR_TYPE type);
 
 	glm::vec2 Seek(glm::vec2 TargetPos);
 
@@ -63,6 +72,24 @@ public:
 
 	glm::vec2 Wander(float dt);
 
+	glm::vec2 ObstacleAvoidance(const std::vector<BaseGameEntity*>& obstacles);
+
+	glm::vec2 Interpose(const Vehicle* AgentA, const Vehicle* AgentB);
+
+	glm::vec2 Hide(const Vehicle* target, const std::vector<BaseGameEntity*>& obstacles);
+
+	glm::vec2 OffsetPursuit(const Vehicle* leader, glm::vec2 offset);
+
+	glm::vec2 Sepration(const std::vector<Vehicle*>& neithbors);
+	
+	glm::vec2 Alignment(const std::vector<Vehicle*>& neithbors);
+
+	glm::vec2 Cohesion(const std::vector<Vehicle*>& neithbors);
+
+
+	glm::vec2 GetHidingPosition(const glm::vec2& posOb, float radiusOb, const glm::vec2& posTarget);
+	
+
 private:
 	Vehicle*			m_pVehicle;
 	int					m_BehaviorFlag;
@@ -71,12 +98,16 @@ private:
 	float				m_fSeekWeight;
 	float				m_fFleeWeight;
 	float				m_fWanderWeight;
+	float				m_fObstacleAvoidanceWeight;
 
 	// Wander
 	float				m_fWanderRadius;
 	float				m_fWanderDistance;
 	float				m_fWanderJitter;
 	glm::vec2			m_vWanderTarget;
+
+	// obstacle
+	float				m_fDBoxLength;
 	
 };
 
@@ -87,16 +118,25 @@ public:
 	BaseGameEntity();
 	virtual ~BaseGameEntity();
 
+	virtual void Update(float dt);
+
+	virtual void Draw();
+
 	void SetPosition(float x, float y);
-	void SetScale(float sx, float sy);
 	void SetBRadius(float r);
 
 	glm::vec2 GetPosition() const {return m_vPos;}
+	float GetBRadius() { return m_fBRadius; }
+
+	// Tag
+	void Tag() { m_bTag = true; }
+	void UnTag() { m_bTag = false; }
+	bool IsTagged() { return m_bTag; }
 
 protected:
 	glm::vec2			m_vPos;
-	glm::vec2			m_vScale;
 	float				m_fBRadius;
+	bool				m_bTag;
 };
 
 class MovingEntity : public BaseGameEntity
@@ -124,11 +164,14 @@ public:
 	Vehicle();
 	~Vehicle();
 
-	void Start(CShape* shape);
+	void Start(CShape* shape,glm::vec3 color = glm::vec3(1.0f, 0.0f, 0.0f));
 	void Update(float dt);
 	void Draw();
 
 	const glm::mat4& GetTransformMatrix() const;
+	GameWorld* GetWorld()				{ return m_pWorld; }
+	SteeringBehaviors* GetBehaviors()	{ return m_pSteering;}
+	void SetWorld(GameWorld* g);
 
 protected:
 	GameWorld*			m_pWorld;
@@ -138,4 +181,17 @@ protected:
 	float				m_fRotation;
 };
 
+class ObatacleEntity : public BaseGameEntity
+{
+public:
+	ObatacleEntity();
+	void Start(CShape* shape);
+	void Update(float dt);
+	void Draw();
+private:
+	Drawable*			m_pDraw;
+};
+
 float TurnaroundTime(const Vehicle* v, glm::vec2 TargetPos);
+
+glm::vec2 TransformPosition(const glm::mat4 Trans, glm::vec2 pos);

@@ -2,6 +2,8 @@
 #include "Shape.h"
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
+#include <vector>
+#include "MathLib.h"
 
 CMeshData::CMeshData()
 	: IResource()
@@ -43,6 +45,8 @@ CShape::~CShape()
 void CShape::Init(CMeshData* pMesh, VERTEX_TYPE type)
 {
 	m_VertexType = type;
+
+	m_BBox = CalcBBox(pMesh);
 
 	RELEASE_PTR(m_pMeshData);
 	m_pMeshData = pMesh;
@@ -107,4 +111,26 @@ void CShape::Bind()
 void CShape::SetVBUsage(uint usage)
 {
 	m_VertexBufferUsage = usage;
+}
+
+BBox CShape::CalcBBox(CMeshData* pMesh)
+{
+	float minX = pMesh->m_Positions[0];
+	float maxX = pMesh->m_Positions[0];
+	float minY = pMesh->m_Positions[1];
+	float maxY = pMesh->m_Positions[1];
+
+	for (int i = 1; i < pMesh->m_nNumVertex ; ++i)
+	{
+		minX = Math::Min(minX, pMesh->m_Positions[i * 3 + 0]);
+		maxX = Math::Max(maxX, pMesh->m_Positions[i * 3 + 0]);
+		minY = Math::Min(minY, pMesh->m_Positions[i * 3 + 1]);
+		maxY = Math::Max(maxY, pMesh->m_Positions[i * 3 + 1]);
+	}
+
+	BBox bb;
+	bb.pos = glm::vec2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+	bb.size = glm::vec2(maxX - minX, maxY - minY);
+	
+	return bb;
 }

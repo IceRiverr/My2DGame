@@ -7,6 +7,7 @@
 
 #include "TypeDefine.h"
 #include "Resource.h"
+#include "Physics2DLib.h"
 
 enum VERTEX_TYPE
 {
@@ -42,13 +43,15 @@ public:
 	void SetVBUsage(uint usage);
 	const CMeshData* GetMeshData() const { return m_pMeshData; }
 	CMeshData* GetMeshData() { return m_pMeshData; }
-
 	uint GetVBO() { return m_VBO; }
+	
+	static BBox CalcBBox(CMeshData* pMesh);
 
 private:
 	CMeshData*			m_pMeshData;
 	VERTEX_TYPE			m_VertexType;
 	uint				m_VertexBufferUsage;
+	BBox				m_BBox;
 
 	uint				m_VAO;
 	uint				m_VBO;
