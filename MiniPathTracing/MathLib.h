@@ -11,52 +11,63 @@ class IShape;
 class Entity;
 struct InsterestResult;
 
-struct Color
+namespace Math
 {
-	Color();
-	Color(uchar _r, uchar _g, uchar _b);
+	float Clamp(float a, float lhs, float rhs);
+	float Min(float a, float b);
+	float Max(float a, float b);
+	int Min(int a, int b);
+	int Max(int a, int b);
+}
 
-	Color& add(uchar _r, uchar _g, uchar _b);
-
+class Color
+{
+public:
 	uchar r, g, b;
+
+	Color();
+	Color(uchar r, uchar g, uchar b);
+	Color&	AddSafe(const Color& c);
+	Color	operator*(float a) const;
+	Color	operator+(const Color& c) const;
 };
 
-struct Vector3
+class Vec3
 {
+public:
 	float x, y, z;
 
-	Vector3();
-	Vector3(float _x, float _y, float _z);
+	Vec3();
+	Vec3(const float x, const float y, const float z);
 
-	static float length(const Vector3& v);
-
-	static float sqrLength(const Vector3& v);
-
-	static Vector3 normalize(const Vector3& v);
-
-	static Vector3 negate(const Vector3& v);
-
-	static Vector3 add(const Vector3& v1, const Vector3& v2);
-
-	static Vector3 sub(const Vector3& v1, const Vector3& v2);
-
-	static Vector3 mul(const Vector3& v, float m);
+	Vec3	operator-() const;
+	Vec3&	operator=(const Vec3& v);
+	float	operator*(const Vec3& v) const;
+	Vec3	operator*(const float a) const;
+	Vec3	operator/(const float a) const;
+	Vec3	operator+(const Vec3& v) const;
+	Vec3	operator-(const Vec3& v) const;
+	Vec3&	operator+=(const Vec3& v);
+	Vec3&	operator-=(const Vec3& v);
+	Vec3&	operator*=(const float a);
+	Vec3&	operator/=(const Vec3& v);
+	Vec3&	operator/=(const float a);
 	
-	static Vector3 divide(const Vector3& v, float m);
+	friend Vec3 operator*(const float a, const Vec3& v);
 
-	static float dot(const Vector3& v1, const Vector3& v2);
-
-	static Vector3 cross(const Vector3& v1, const Vector3& v2);
-
+	Vec3	Cross(const Vec3& v) const;
+	float	Length() const;
+	float	LengthSqr() const;
+	Vec3&	Normalize();
 };
 
 struct Ray
 {
-	Ray(const Vector3& o, const Vector3& d);
-	Vector3 origin;
-	Vector3 direction;
+	Ray(const Vec3& o, const Vec3& d);
+	Vec3 origin;
+	Vec3 direction;
 
-	static Vector3 getPoint(Ray r,float t);
+	static Vec3 getPoint(Ray r,float t);
 };
 
 class IShape
@@ -69,7 +80,7 @@ public:
 	};
 
 	virtual ~IShape() {};
-	virtual bool intersect(const Ray& ray, InsterestResult& result) = 0;
+	virtual void intersect(const Ray& ray, InsterestResult& result) = 0;
 	virtual TYPE getType() = 0;
 };
 
@@ -85,7 +96,7 @@ public:
 	Entity();
 	~Entity();
 
-	bool intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, InsterestResult& result);
 public:
 	IShape*		shape;
 	TYPE		type;
@@ -96,22 +107,23 @@ struct InsterestResult
 {
 	InsterestResult();
 
+	bool			bHit;
 	Entity*			entity;
 	float			distance;
-	Vector3			position;
-	Vector3			normal;
+	Vec3			position;
+	Vec3			normal;
 };
 
 class Sphere : public IShape
 {
 public:
-	Sphere(const Vector3& o, float r);
+	Sphere(const Vec3& o, float r);
 	~Sphere() {}
-	bool intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, InsterestResult& result);
 	TYPE getType() { return type; }
 
 public:
-	Vector3		center;
+	Vec3		center;
 	float		radius;
 private:
 	TYPE		type;
@@ -120,37 +132,40 @@ private:
 class Plane : public IShape
 {
 public:
-	Plane(const Vector3& n, const Vector3& p);
+	Plane(const Vec3& n, const Vec3& p);
 	~Plane() {}
-	bool intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, InsterestResult& result);
 	TYPE getType() { return type; }
 
 public:
-	Vector3		normal;
-	Vector3		point;
+	Vec3		normal;
+	Vec3		point;
 
 private:
 	TYPE type;
 };
 
-struct PerspectiveCamera
+class Camera
 {
-	Vector3 eye;
-	Vector3 front;
-	Vector3 up;
-	Vector3 right;
+public:
+	Camera(const Vec3& _eye, const Vec3& _front, const Vec3& _up, float _fov, float ratio);
+	static Ray generateRay(const Camera& camera, float x, float y);
+
+public:
+	Vec3	eye;
+	Vec3	front;
+	Vec3	up;
+	Vec3	right;
 	float	fov;
 	float	fovScale;
-
-	PerspectiveCamera(const Vector3& _eye, const Vector3& _front, const Vector3& _up, float _fov);
-
-	static Ray generateRay(const PerspectiveCamera& camera, float x, float y);
+	float	aspectRatio;
 };
 
 class Scene
 {
 public:
-	bool intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, InsterestResult& result);
+	Color rayTrace(const Ray& ray, InsterestResult& hitResult);
 
 	std::vector<Entity*> entities;
 };
