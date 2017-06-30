@@ -19,3 +19,4 @@ MyGame/bin/
 *.exe
 *.obj
 MyGame/resource/
+*.ppm
