@@ -20,3 +20,5 @@ MyGame/bin/
 *.obj
 MyGame/resource/
 *.ppm
+*.iobj
+MiniPathTracing/x64/

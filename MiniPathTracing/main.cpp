@@ -18,20 +18,20 @@ int main()
 
 	Entity sp1 = Entity();
 	sp1.type = Entity::MODEL;
-	sp1.shape = new Sphere(Vec3(-40.0f, 0.0f, 20.0f), 30.0f);
+	sp1.shape = new Sphere(Vec3(-100.0f, 2.0f, -150.0f), 100.0f);
 	sp1.color = Color(32, 128, 11);
 	scene.entities.push_back(&sp1);
 
 	Entity sp2 = Entity();
 	sp2.type = Entity::MODEL;
-	sp2.shape = new Sphere(Vec3(40.0f, 0.0f, -10.0f), 20.0f);
+	sp2.shape = new Sphere(Vec3(100.0f, -2.0f, -50.0f), 50.0f);
 	sp2.color = Color(55, 11, 121);
 	scene.entities.push_back(&sp2);
 
 	Entity floor = Entity();
 	floor.type = Entity::MODEL;
 	floor.shape = new Plane(Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, -50.0f, 0.0f));
-	floor.color = Color(100, 0, 0);
+	floor.color = Color(255, 0, 0);
 	scene.entities.push_back(&floor);
 
 	/*Entity wall = Entity();
@@ -42,13 +42,13 @@ int main()
 
 	Entity light1 = Entity();
 	light1.type = Entity::LIGHT;
-	light1.shape = new Sphere(Vec3(-40.0f, 50.0f, 40.0), 2.0f);
+	light1.shape = new Sphere(Vec3(-40.0f, 200.0f, -50.0), 10.0f);
 	light1.color = Color(0xff, 0xff, 0xff);
 	scene.entities.push_back(&light1);
 
 	Entity light2 = Entity();
 	light2.type = Entity::LIGHT;
-	light2.shape = new Sphere(Vec3(30.0f, 50.0f, 5.0f), 2.0f);
+	light2.shape = new Sphere(Vec3(30.0f, 50.0f, 5.0f), 1.0f);
 	light2.color = Color(0xff, 0xff, 0xff);
 	scene.entities.push_back(&light2);
 
@@ -78,14 +78,15 @@ int main()
 			TotalColor.AddSafe(primaryColor);
 
 			// reflect
-			if (hitResult.bHit)
+			if (hitResult.bHit && hitResult.entity->type != Entity::LIGHT)
 			{
 				Color secordaryColor;
-				float  reflectance = 0.2f;
+				float  reflectance = 0.3f;
 				Vec3 refDir = ray.direction - 2.0f * (ray.direction * hitResult.normal) * hitResult.normal;
+				refDir.Normalize();
 				Ray refRay(hitResult.position, refDir);
 				InsterestResult refResult;
-				
+
 				secordaryColor = scene.rayTrace(refRay, refResult);
 				TotalColor.AddSafe(secordaryColor * reflectance);
 			}

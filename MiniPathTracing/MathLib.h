@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 
-#define  PI 3.1415926535898
+#define		PI		3.1415926535898
+#define		DELTA	0.00001f
 
 // ÓÒÊÖ×ø±êÏµ
 

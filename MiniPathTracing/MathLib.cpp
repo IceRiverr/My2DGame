@@ -281,7 +281,7 @@ Color Scene::rayTrace(const Ray& ray, InsterestResult& hitResult)
 					Vec3 V = ray.direction;
 					Vec3 N = hitResult.normal;
 					Vec3 L = (lightShpae->center - hitResult.position).Normalize();
-					Vec3 R = -L - 2.0f * (-L * N) * N;
+					Vec3 R = (-L - 2.0f * (-L * N) * N).Normalize();
 					float LdotN = L * N;
 					float VdotR = V * R;
 					if (LdotN > 0.0f)
@@ -338,7 +338,7 @@ Plane::Plane(const Vec3& n, const Vec3& p)
 void Plane::intersect(const Ray& ray, InsterestResult& result)
 {
 	float d = this->normal * ray.direction;
-	if (d != 0.0f)
+	if (d != 0.0f && d < -DELTA)
 	{
 		float n = this->normal * this->point - this->normal * ray.origin;
 		float t = n / d;
@@ -372,10 +372,6 @@ void Entity::intersect(const Ray& ray, InsterestResult& result)
 
 float Math::Clamp(float a, float lhs, float rhs)
 {
-	//float tmp;
-	//lhs < rhs ? (true) : (tmp = lhs, lhs = rhs, rhs = tmp);
-	//return (a < lhs ? a = lhs : (a > rhs ? a = rhs : true));
-
 	if (lhs > rhs)
 	{
 		float tmp = lhs;
