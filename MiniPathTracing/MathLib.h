@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
 
-#define		PI		3.1415926535898
-#define		DELTA	0.00001f
+#define		PI				3.1415926535898
+#define		DELTA			0.0001f
+#define		TRACE_DIST		1000000.0f
+#define		TRACE_DEPTH		2
 
 // ÓÒÊÖ×ø±êÏµ
 
@@ -10,7 +12,7 @@ typedef unsigned char uchar;
 
 class IShape;
 class Entity;
-struct InsterestResult;
+struct HitResult;
 
 namespace Math
 {
@@ -81,7 +83,7 @@ public:
 	};
 
 	virtual ~IShape() {};
-	virtual void intersect(const Ray& ray, InsterestResult& result) = 0;
+	virtual void intersect(const Ray& ray, HitResult& result) = 0;
 	virtual TYPE getType() = 0;
 };
 
@@ -97,16 +99,16 @@ public:
 	Entity();
 	~Entity();
 
-	void intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, HitResult& result);
 public:
 	IShape*		shape;
 	TYPE		type;
 	Color		color;
 };
 
-struct InsterestResult
+struct HitResult
 {
-	InsterestResult();
+	HitResult();
 
 	bool			bHit;
 	Entity*			entity;
@@ -120,7 +122,7 @@ class Sphere : public IShape
 public:
 	Sphere(const Vec3& o, float r);
 	~Sphere() {}
-	void intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, HitResult& result);
 	TYPE getType() { return type; }
 
 public:
@@ -135,12 +137,27 @@ class Plane : public IShape
 public:
 	Plane(const Vec3& n, const Vec3& p);
 	~Plane() {}
-	void intersect(const Ray& ray, InsterestResult& result);
+	void intersect(const Ray& ray, HitResult& result);
 	TYPE getType() { return type; }
 
 public:
 	Vec3		normal;
 	Vec3		point;
+
+private:
+	TYPE type;
+};
+
+class PlaneV2 : public IShape
+{
+public:
+	PlaneV2(float a, float b, float c, float d);
+	~PlaneV2() {}
+	void intersect(const Ray& ray, HitResult& result);
+	TYPE getType() { return type; }
+
+public:
+	float a, b, c, d;
 
 private:
 	TYPE type;
@@ -165,8 +182,8 @@ public:
 class Scene
 {
 public:
-	void intersect(const Ray& ray, InsterestResult& result);
-	Color rayTrace(const Ray& ray, InsterestResult& hitResult);
+	void intersect(const Ray& ray, HitResult& result);
+	Color rayTrace(const Ray& ray, HitResult& hitResult, int depth = 1);
 
 	std::vector<Entity*> entities;
 };

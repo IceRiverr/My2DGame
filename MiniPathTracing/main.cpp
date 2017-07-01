@@ -34,11 +34,17 @@ int main()
 	floor.color = Color(255, 0, 0);
 	scene.entities.push_back(&floor);
 
-	/*Entity wall = Entity();
+	Entity wall = Entity();
 	wall.type = Entity::MODEL;
-	wall.shape = new Plane(Vec3(0.0f, 0.0f, -1.0f), Vec3(0.0f, 0.0f, -50.0f));
-	wall.color = Color(255, 0, 0);
-	scene.entities.push_back(&wall);*/
+	wall.shape = new Plane(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.0f, 0.0f, -400.0f));
+	wall.color = Color(0, 100, 100);
+	scene.entities.push_back(&wall);
+
+	/*Entity wall2 = Entity();
+	wall2.type = Entity::MODEL;
+	wall2.shape = new PlaneV2(0.0f, 0.0f, 1.0f, -100.0f);
+	wall2.color = Color(0, 100, 100);
+	scene.entities.push_back(&wall2);*/
 
 	Entity light1 = Entity();
 	light1.type = Entity::LIGHT;
@@ -67,29 +73,9 @@ int main()
 		{
 			sx = i * dx;
 
-			Color TotalColor;
-
-			// primary
-			Color primaryColor;
 			Ray ray = Camera::generateRay(camera, sx, sy);
-			InsterestResult hitResult;
-			
-			primaryColor = scene.rayTrace(ray, hitResult);
-			TotalColor.AddSafe(primaryColor);
-
-			// reflect
-			if (hitResult.bHit && hitResult.entity->type != Entity::LIGHT)
-			{
-				Color secordaryColor;
-				float  reflectance = 0.3f;
-				Vec3 refDir = ray.direction - 2.0f * (ray.direction * hitResult.normal) * hitResult.normal;
-				refDir.Normalize();
-				Ray refRay(hitResult.position, refDir);
-				InsterestResult refResult;
-
-				secordaryColor = scene.rayTrace(refRay, refResult);
-				TotalColor.AddSafe(secordaryColor * reflectance);
-			}
+			HitResult hitResult;
+			Color TotalColor = scene.rayTrace(ray, hitResult);
 			colorImage.drawPoint(i, j, TotalColor);
 		}
 	}

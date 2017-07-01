@@ -188,7 +188,7 @@ Sphere::Sphere(const Vec3& o, float r)
 {
 }
 
-void Sphere::intersect(const Ray& ray, InsterestResult& result)
+void Sphere::intersect(const Ray& ray, HitResult& result)
 {
 	Vec3 v = ray.origin - this->center;
 
@@ -201,15 +201,19 @@ void Sphere::intersect(const Ray& ray, InsterestResult& result)
 		float discr = DdotV * DdotV - a0;
 		if (discr > 0.0f)
 		{
-			result.bHit = true;
-			result.distance = -DdotV - (float)sqrt(discr);
-			result.position = Ray::getPoint(ray, result.distance);
-			result.normal = (result.position - this->center).Normalize();
+			float dist = -DdotV - (float)sqrt(discr);
+			if (dist < TRACE_DIST)
+			{
+				result.bHit = true;
+				result.distance = dist;
+				result.position = Ray::getPoint(ray, result.distance);
+				result.normal = (result.position - this->center).Normalize();
+			}
 		}
 	}
 }
 
-InsterestResult::InsterestResult()
+HitResult::HitResult()
 {
 	bHit = false;
 	entity = nullptr;
@@ -238,10 +242,10 @@ Ray Camera::generateRay(const Camera& camera, float x, float y)
 	return Ray(camera.eye, dir);
 }
 
-void Scene::intersect(const Ray& ray, InsterestResult& result)
+void Scene::intersect(const Ray& ray, HitResult& result)
 {
-	InsterestResult testResult;
-	float closestDist = FLT_MAX;
+	HitResult testResult;
+	float closestDist = TRACE_DIST;
 	for (int i = 0; i < (int)entities.size(); ++i)
 	{
 		Entity* ent = entities[i];
@@ -258,40 +262,80 @@ void Scene::intersect(const Ray& ray, InsterestResult& result)
 	}
 }
 
-Color Scene::rayTrace(const Ray& ray, InsterestResult& hitResult)
+Color Scene::rayTrace(const Ray& ray, HitResult& hitResult, int depth)
 {
-	Color TraceColor;
+	if (depth > TRACE_DEPTH)
+		return Color(0, 0, 0);
+
+	Color TraceColor = Color(0, 0, 0);
 	intersect(ray, hitResult);
-	if (hitResult.bHit)
+	if (!hitResult.bHit)
 	{
-		Entity* ent = hitResult.entity;
-		if (ent->type == Entity::LIGHT)
+		return Color(0, 0, 0);
+	}
+	else
+	{
+		if (hitResult.entity->type == Entity::LIGHT)
 		{
-			TraceColor = ent->color;
+			return Color(255, 255, 255);
 		}
 		else
 		{
-			for (int en = 0; en < (int)entities.size(); ++en)
+			for (int i = 0; i < entities.size(); ++i)
 			{
-				Entity* test = entities[en];
-				if (test != ent && test->type == Entity::LIGHT)
+				if (entities[i]->type == Entity::LIGHT)
 				{
-					Entity* light = test;
-					Sphere* lightShpae = static_cast<Sphere*>(light->shape);
-					Vec3 V = ray.direction;
+					Entity* light = entities[i];
+					Vec3 L = static_cast<Sphere*>(light->shape)->center - hitResult.position;
+					L.Normalize();
+
+					// point light shadow
+					float shade = 1.0f;
+					if (light->shape->getType() == IShape::SPHERE)
+					{
+						Ray toLightRay = Ray(hitResult.position + L * DELTA, L);
+						HitResult toLightHitResult;
+						intersect(toLightRay, toLightHitResult);
+						if (toLightHitResult.bHit && toLightHitResult.entity != light)
+						{
+							shade = 0.0f;
+						}
+					}
+
+					// diffuse shade
+					Color diffuseColor;
 					Vec3 N = hitResult.normal;
-					Vec3 L = (lightShpae->center - hitResult.position).Normalize();
-					Vec3 R = (-L - 2.0f * (-L * N) * N).Normalize();
 					float LdotN = L * N;
-					float VdotR = V * R;
 					if (LdotN > 0.0f)
 					{
-						Color color = ent->color * LdotN + ent->color * powf(VdotR, 10.0f) * 1.0f;
-						TraceColor.AddSafe(color);
+						diffuseColor = hitResult.entity->color * (LdotN * shade);
+						TraceColor.AddSafe(diffuseColor);
+					}
+
+					// specular shade
+					Color specularColor;
+					Vec3 V = ray.direction;
+					Vec3 R = L - 2.0f * (L * N) * N;
+					float VdotR = V * R;
+					if (VdotR > 0.0f)
+					{
+						float spec = powf(VdotR, 40.0f);
+						specularColor = hitResult.entity->color * (spec * shade);
+						TraceColor.AddSafe(specularColor);
 					}
 				}
 			}
 		}
+
+		// reflect shade
+		Color refColor;
+		float  reflectance = 0.3f;
+		Vec3 N = hitResult.normal;
+		Vec3 R = ray.direction - 2.0f * (ray.direction * N) * N;
+		Ray refRay = Ray(hitResult.position + R * DELTA, R);
+		HitResult refHitResult;
+		refColor = rayTrace(refRay, refHitResult, depth + 1) * reflectance;
+		TraceColor.AddSafe(refColor);
 	}
 	return TraceColor;
 }
@@ -335,14 +379,14 @@ Plane::Plane(const Vec3& n, const Vec3& p)
 {
 }
 
-void Plane::intersect(const Ray& ray, InsterestResult& result)
+void Plane::intersect(const Ray& ray, HitResult& result)
 {
 	float d = this->normal * ray.direction;
-	if (d != 0.0f && d < -DELTA)
+	if (d < -0.1f)
 	{
 		float n = this->normal * this->point - this->normal * ray.origin;
 		float t = n / d;
-		if (t > 0.0f)
+		if (t > 0.0f && t < TRACE_DIST)
 		{
 			result.bHit = true;
 			result.distance = t;
@@ -360,7 +404,7 @@ Entity::~Entity()
 {
 }
 
-void Entity::intersect(const Ray& ray, InsterestResult& result)
+void Entity::intersect(const Ray& ray, HitResult& result)
 {
 	shape->intersect(ray, result);
 	if (result.bHit)
@@ -402,4 +446,32 @@ float Math::Max(float a, float b)
 int Math::Min(int a, int b)
 {
 	return a < b ? a : b;
+}
+
+PlaneV2::PlaneV2(float a, float b, float c, float d)
+{
+	this->a = a;
+	this->b = b; 
+	this->c = c;
+	this->d = d;
+	type = IShape::PLANE;
+}
+
+void PlaneV2::intersect(const Ray& ray, HitResult& result)
+{
+	Vec3 N = Vec3(a, b, c);
+	float NdotD = N * ray.direction;
+	if (NdotD != 0.0f)
+	{
+		float NdotP = N * ray.origin;
+		float t = -(NdotP + d) / NdotD;
+
+		if (t > 0.0f && t < TRACE_DIST)
+		{
+			result.bHit = true;
+			result.distance = t;
+			result.normal = N;
+			result.position = Ray::getPoint(ray, t);
+		}
+	}
 }
