@@ -148,6 +148,19 @@ Vec3 operator*(const float a, const Vec3& v)
 	return Vec3(a * v.x, a * v.y, a * v.z);
 }
 
+Vec3 refract(const Vec3& normal, const Vec3& incident, float n1, float n2)
+{
+	float n = n1 / n2;
+	float cosI = normal * incident;
+	float sinI2 = n * n * cosI * cosI;
+	if (sinI2 > 1.0f)
+		return Vec3(0.0f, 0.0f, 0.0f);
+	else
+	{
+		return incident * n - (n * cosI + (float)sqrt(1.0f - sinI2)) * normal;
+	}
+}
+
 Vec3 Vec3::Cross(const Vec3& v) const
 {
 	return Vec3(y * v.z - v.y * z, z * v.x - v.z * x, x * v.y - v.x * y);
@@ -202,8 +215,16 @@ void Sphere::intersect(const Ray& ray, HitResult& result)
 		if (discr > 0.0f)
 		{
 			float dist = -DdotV - (float)sqrt(discr);
-			if (dist < TRACE_DIST)
+			if (dist > 0.0f && dist < TRACE_DIST)
 			{
+				result.bHit = true;
+				result.distance = dist;
+				result.position = Ray::getPoint(ray, result.distance);
+				result.normal = (result.position - this->center).Normalize();
+			}
+			else
+			{
+				dist = -DdotV + (float)sqrt(discr);
 				result.bHit = true;
 				result.distance = dist;
 				result.position = Ray::getPoint(ray, result.distance);
@@ -262,7 +283,7 @@ void Scene::intersect(const Ray& ray, HitResult& result)
 	}
 }
 
-Color Scene::rayTrace(const Ray& ray, HitResult& hitResult, int depth)
+Color Scene::rayTrace(const Ray& ray, HitResult& hitResult, float inIOR, int depth)
 {
 	if (depth > TRACE_DEPTH)
 		return Color(0, 0, 0);
@@ -302,40 +323,56 @@ Color Scene::rayTrace(const Ray& ray, HitResult& hitResult, int depth)
 						}
 					}
 
-					// diffuse shade
-					Color diffuseColor;
-					Vec3 N = hitResult.normal;
-					float LdotN = L * N;
-					if (LdotN > 0.0f)
+					if (shade > 0.0f)
 					{
-						diffuseColor = hitResult.entity->color * (LdotN * shade);
-						TraceColor.AddSafe(diffuseColor);
-					}
+						// diffuse shade
+						Color diffuseColor;
+						Vec3 N = hitResult.normal;
+						float LdotN = L * N;
+						if (LdotN > 0.0f)
+						{
+							diffuseColor = hitResult.entity->material->color * (LdotN * shade);
+							TraceColor.AddSafe(diffuseColor);
+						}
 
-					// specular shade
-					Color specularColor;
-					Vec3 V = ray.direction;
-					Vec3 R = L - 2.0f * (L * N) * N;
-					float VdotR = V * R;
-					if (VdotR > 0.0f)
-					{
-						float spec = powf(VdotR, 40.0f);
-						specularColor = hitResult.entity->color * (spec * shade);
-						TraceColor.AddSafe(specularColor);
+						// specular shade
+						Color specularColor;
+						Vec3 V = ray.direction;
+						Vec3 R = L - 2.0f * (L * N) * N;
+						float VdotR = V * R;
+						if (VdotR > 0.0f)
+						{
+							float spec = powf(VdotR, hitResult.entity->material->specular);
+							specularColor = hitResult.entity->material->color * (spec * shade);
+							TraceColor.AddSafe(specularColor);
+						}
 					}
 				}
 			}
-		}
 
-		// reflect shade
-		Color refColor;
-		float  reflectance = 0.3f;
-		Vec3 N = hitResult.normal;
-		Vec3 R = ray.direction - 2.0f * (ray.direction * N) * N;
-		Ray refRay = Ray(hitResult.position + R * DELTA, R);
-		HitResult refHitResult;
-		refColor = rayTrace(refRay, refHitResult, depth + 1) * reflectance;
-		TraceColor.AddSafe(refColor);
+			// reflect shade
+			Color reflectColor;
+			Vec3 N = hitResult.normal;
+			Vec3 R = ray.direction - 2.0f * (ray.direction * N) * N;
+			Ray reflectRay = Ray(hitResult.position + R * DELTA, R);
+			HitResult reflectHitResult;
+			reflectColor = rayTrace(reflectRay, reflectHitResult, hitResult.entity->material->IOR, depth + 1) * hitResult.entity->material->reflectance;
+			TraceColor.AddSafe(reflectColor);
+
+			// refract shade
+			/*Color refractColor;
+			Vec3 T = refract(N, ray.direction, inIOR, hitResult.entity->material->IOR);
+			Ray refractRay = Ray(hitResult.position + T * DELTA, T);
+			HitResult refractHitResult;
+			refractColor = rayTrace(refractRay, refractHitResult, hitResult.entity->material->IOR, depth + 1);
+			Vec3 absource = Vec3(refractColor.r, refractColor.g, refractColor.g) / 255.0f * 0.15f * (-refractHitResult.distance);
+			Vec3 transparency = Vec3(expf(absource.x), expf(absource.y), expf(absource.z));
+			refractColor = Color(
+				(uchar)(hitResult.entity->material->color.r * transparency.x),
+				(uchar)(hitResult.entity->material->color.g * transparency.y),
+				(uchar)(hitResult.entity->material->color.b * transparency.z));
+			TraceColor.AddSafe(refractColor);*/
+		}
 	}
 	return TraceColor;
 }
@@ -382,7 +419,7 @@ Plane::Plane(const Vec3& n, const Vec3& p)
 void Plane::intersect(const Ray& ray, HitResult& result)
 {
 	float d = this->normal * ray.direction;
-	if (d < -0.1f)
+	if (d < -DELTA)
 	{
 		float n = this->normal * this->point - this->normal * ray.origin;
 		float t = n / d;
@@ -398,10 +435,16 @@ void Plane::intersect(const Ray& ray, HitResult& result)
 
 Entity::Entity()
 {
+	shape = nullptr;
+	material = nullptr;
 }
 
 Entity::~Entity()
 {
+	if(shape)
+		delete shape;
+	if(material)
+		delete material;
 }
 
 void Entity::intersect(const Ray& ray, HitResult& result)
@@ -474,4 +517,20 @@ void PlaneV2::intersect(const Ray& ray, HitResult& result)
 			result.position = Ray::getPoint(ray, t);
 		}
 	}
+}
+
+Material::Material()
+{
+	this->color = Color(0xff, 0xff, 0xff);
+	this->reflectance = 0.3f;
+	this->specular = 40.0f;
+	this->IOR = 1.0f;
+}
+
+Material::Material(Color color, float reflect, float specular, float refract)
+{
+	this->color = color;
+	this->reflectance = reflect;
+	this->specular = specular;
+	this->IOR = reflect;
 }

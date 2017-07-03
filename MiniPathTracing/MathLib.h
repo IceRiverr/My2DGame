@@ -13,6 +13,7 @@ typedef unsigned char uchar;
 class IShape;
 class Entity;
 struct HitResult;
+class Material;
 
 namespace Math
 {
@@ -64,6 +65,8 @@ public:
 	Vec3&	Normalize();
 };
 
+Vec3 refract(const Vec3& normal, const Vec3& incident, float n1, float n2);
+
 struct Ray
 {
 	Ray(const Vec3& o, const Vec3& d);
@@ -103,7 +106,7 @@ public:
 public:
 	IShape*		shape;
 	TYPE		type;
-	Color		color;
+	Material*	material;
 };
 
 struct HitResult
@@ -183,7 +186,7 @@ class Scene
 {
 public:
 	void intersect(const Ray& ray, HitResult& result);
-	Color rayTrace(const Ray& ray, HitResult& hitResult, int depth = 1);
+	Color rayTrace(const Ray& ray, HitResult& hitResult, float inIOR, int depth);//int depth = 1
 
 	std::vector<Entity*> entities;
 };
@@ -201,5 +204,18 @@ private:
 	int			w;
 	int			h;
 	Color*		colorBuffer;
+};
+
+class Material
+{
+public:
+	Material();
+	Material(Color color ,float reflect, float specular, float refract);
+
+public:
+	Color		color;
+	float		reflectance;
+	float		specular;
+	float		IOR;
 };
 
